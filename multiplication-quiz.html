@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .setup-screen, .quiz-screen, .results-screen {
+            display: none;
+        }
+
+        .setup-screen.active, .quiz-screen.active, .results-screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .question-progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .question {
+            text-align: center;
+            font-size: 2.5em;
+            color: #333;
+            margin: 30px 0;
+            font-weight: 600;
+        }
+
+        .timer {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            min-height: 24px;
+        }
+
+        .feedback.correct {
+            color: #4caf50;
+        }
+
+        .feedback.incorrect {
+            color: #f44336;
+        }
+
+        .stats {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 3em;
+            color: #667eea;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .congratulations {
+            text-align: center;
+            color: #4caf50;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multiplication Quiz</h1>
+
+        <!-- Setup Screen -->
+        <div class="setup-screen active">
+            <div class="form-group">
+                <label for="difficulty">Difficulty Level:</label>
+                <select id="difficulty">
+                    <option value="easy" selected>Easy (2-12)</option>
+                    <option value="hard">Hard (2-20, with 13-20)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="questionCount">Number of Questions:</label>
+                <input type="number" id="questionCount" value="5" min="1" max="50">
+            </div>
+            <button onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="question-progress" id="progress"></div>
+            <div class="timer" id="timer">Time: 0:00</div>
+            <div class="question" id="question"></div>
+            <div class="form-group">
+                <input type="text" id="answer" placeholder="Type your answer" autocomplete="off">
+            </div>
+            <button onclick="checkAnswer()">Submit Answer</button>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen">
+            <div class="congratulations">Congratulations!</div>
+            <div class="score" id="scoreDisplay"></div>
+            <div class="stats">
+                <div class="stat-row">
+                    <span class="stat-label">Questions:</span>
+                    <span class="stat-value" id="totalQuestions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Attempts:</span>
+                    <span class="stat-value" id="totalAttempts"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Time:</span>
+                    <span class="stat-value" id="totalTime"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Score:</span>
+                    <span class="stat-value" id="scoreValue"></span>
+                </div>
+            </div>
+            <button onclick="resetQuiz()">Start New Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let difficulty = 'easy';
+        let totalQuestions = 5;
+        let currentQuestion = 0;
+        let attempts = 0;
+        let startTime;
+        let timerInterval;
+        let currentAnswer;
+        let num1, num2;
+
+        function startQuiz() {
+            difficulty = document.getElementById('difficulty').value;
+            totalQuestions = parseInt(document.getElementById('questionCount').value);
+
+            if (totalQuestions < 1) totalQuestions = 1;
+            if (totalQuestions > 50) totalQuestions = 50;
+
+            currentQuestion = 0;
+            attempts = 0;
+            startTime = Date.now();
+
+            showScreen('quiz-screen');
+            startTimer();
+            nextQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent =
+                    `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+
+            if (currentQuestion > totalQuestions) {
+                endQuiz();
+                return;
+            }
+
+            if (difficulty === 'easy') {
+                // Easy: 2-12 inclusive
+                num1 = Math.floor(Math.random() * 11) + 2;
+                num2 = Math.floor(Math.random() * 11) + 2;
+            } else {
+                // Hard: 2-20, with at least one number between 13-20
+                num1 = Math.floor(Math.random() * 19) + 2;
+                num2 = Math.floor(Math.random() * 19) + 2;
+
+                // Ensure at least one number is 13-20
+                if (num1 < 13 && num2 < 13) {
+                    // Both are below 13, so force one to be 13-20
+                    if (Math.random() < 0.5) {
+                        num1 = Math.floor(Math.random() * 8) + 13;
+                    } else {
+                        num2 = Math.floor(Math.random() * 8) + 13;
+                    }
+                }
+            }
+            currentAnswer = num1 * num2;
+
+            document.getElementById('progress').textContent =
+                `Question ${currentQuestion} of ${totalQuestions}`;
+            document.getElementById('question').textContent = `${num1} × ${num2} = ?`;
+            document.getElementById('answer').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('answer').focus();
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answer').value);
+            attempts++;
+
+            if (userAnswer === currentAnswer) {
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('feedback').className = 'feedback correct';
+                setTimeout(nextQuestion, 1000);
+            } else {
+                document.getElementById('feedback').textContent = 'Try again!';
+                document.getElementById('feedback').className = 'feedback incorrect';
+                document.getElementById('answer').value = '';
+                document.getElementById('answer').focus();
+            }
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            const score = ((totalQuestions / attempts) * 100).toFixed(1);
+
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}%`;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('totalAttempts').textContent = attempts;
+            document.getElementById('totalTime').textContent = timeString;
+            document.getElementById('scoreValue').textContent = `${score}%`;
+
+            showScreen('results-screen');
+        }
+
+        function resetQuiz() {
+            showScreen('setup-screen');
+        }
+
+        function showScreen(screenClass) {
+            document.querySelectorAll('.setup-screen, .quiz-screen, .results-screen')
+                .forEach(screen => screen.classList.remove('active'));
+            document.querySelector('.' + screenClass).classList.add('active');
+        }
+
+        // Allow Enter key to submit answers
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('answer').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

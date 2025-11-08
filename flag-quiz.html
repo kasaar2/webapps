@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flag Quiz - Learn World Flags</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .option-btn {
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #e7e9fc;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .flag-display {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .flag-img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .input-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .answer-input {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .hint-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-width: 150px;
+            margin: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .match-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .match-item:hover {
+            border-color: #667eea;
+            background: #e7e9fc;
+        }
+
+        .match-item.selected {
+            border-color: #667eea;
+            background: #e7e9fc;
+            transform: scale(1.05);
+        }
+
+        .match-item.matched {
+            background: #d4edda;
+            border-color: #28a745;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .match-item.incorrect-match {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .match-flag {
+            max-width: 150px;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .info-text {
+            text-align: center;
+            color: #6c757d;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .lives-display {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 15px 0;
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flag-img {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flag Quiz</h1>
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <p class="info-text">Test your knowledge of world flags! Choose your difficulty level and game mode to begin.</p>
+
+            <h2 style="text-align: center; margin-top: 30px; color: #667eea;">Select Difficulty</h2>
+            <div class="btn-group">
+                <button class="btn" onclick="selectDifficulty('easy')">Easy (30 flags)</button>
+                <button class="btn" onclick="selectDifficulty('medium')">Medium (80 flags)</button>
+                <button class="btn" onclick="selectDifficulty('hard')">Hard (All 201 flags)</button>
+            </div>
+
+            <h2 style="text-align: center; margin-top: 30px; color: #667eea;">Select Mode</h2>
+            <div class="btn-group">
+                <button class="btn" onclick="selectMode('practice')">Practice Mode</button>
+                <button class="btn" onclick="selectMode('challenge')">Challenge Mode</button>
+            </div>
+
+            <h2 style="text-align: center; margin-top: 30px; color: #667eea;">Select Game Type</h2>
+            <div class="btn-group">
+                <button class="btn" onclick="selectGameType('multipleChoice')">Multiple Choice</button>
+                <button class="btn" onclick="selectGameType('typeAnswer')">Type the Answer</button>
+                <button class="btn" onclick="selectGameType('matchPairs')">Match the Pairs</button>
+            </div>
+
+            <div id="startButtonContainer" style="text-align: center; margin-top: 30px;">
+                <!-- Start button will appear here -->
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill">0 / 0</div>
+            </div>
+
+            <div id="livesDisplay" class="lives-display" style="display: none;">
+                <!-- Lives display for challenge mode -->
+            </div>
+
+            <div id="gameContent">
+                <!-- Game content will be dynamically inserted here -->
+            </div>
+
+            <div id="hintContainer" style="text-align: center; margin: 20px 0;">
+                <!-- Hint button will appear here -->
+            </div>
+
+            <div id="actionButtons" style="text-align: center; margin-top: 20px;">
+                <!-- Action buttons will appear here -->
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 30px;">Session Complete!</h2>
+
+            <div class="stats" id="resultsStats">
+                <!-- Results will be inserted here -->
+            </div>
+
+            <div id="incorrectList" style="margin: 30px 0;">
+                <!-- List of incorrect answers will appear here -->
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="restartApp()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded flag data
+        const FLAGS_DATA = [
+            {"country":"Abkhazia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Flag_of_the_Republic_of_Abkhazia.svg/250px-Flag_of_the_Republic_of_Abkhazia.svg.png"},
+            {"country":"Afghanistan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_the_Taliban.svg/250px-Flag_of_the_Taliban.svg.png"},
+            {"country":"Albania","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Flag_of_Albania.svg/250px-Flag_of_Albania.svg.png"},
+            {"country":"Algeria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_Algeria.svg/250px-Flag_of_Algeria.svg.png"},
+            {"country":"Andorra","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Flag_of_Andorra_%28civil%29.svg/250px-Flag_of_Andorra_%28civil%29.svg.png"},
+            {"country":"Angola","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Flag_of_Angola.svg/250px-Flag_of_Angola.svg.png"},
+            {"country":"Antigua and Barbuda","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Flag_of_Antigua_and_Barbuda.svg/250px-Flag_of_Antigua_and_Barbuda.svg.png"},
+            {"country":"Argentina","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_Argentina.svg/250px-Flag_of_Argentina.svg.png"},
+            {"country":"Armenia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_Armenia.svg/250px-Flag_of_Armenia.svg.png"},
+            {"country":"Australia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Flag_of_Australia_%28converted%29.svg/250px-Flag_of_Australia_%28converted%29.svg.png"},
+            {"country":"Austria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Flag_of_Austria.svg/250px-Flag_of_Austria.svg.png"},
+            {"country":"Azerbaijan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Flag_of_Azerbaijan.svg/250px-Flag_of_Azerbaijan.svg.png"},
+            {"country":"Bahrain","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Flag_of_Bahrain.svg/250px-Flag_of_Bahrain.svg.png"},
+            {"country":"Bangladesh","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Flag_of_Bangladesh.svg/250px-Flag_of_Bangladesh.svg.png"},
+            {"country":"Barbados","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Flag_of_Barbados.svg/250px-Flag_of_Barbados.svg.png"},
+            {"country":"Belarus","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Flag_of_Belarus.svg/250px-Flag_of_Belarus.svg.png"},
+            {"country":"Belgium","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Flag_of_Belgium.svg/250px-Flag_of_Belgium.svg.png"},
+            {"country":"Belize","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Flag_of_Belize.svg/250px-Flag_of_Belize.svg.png"},
+            {"country":"Benin","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Flag_of_Benin.svg/250px-Flag_of_Benin.svg.png"},
+            {"country":"Bhutan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Flag_of_Bhutan.svg/250px-Flag_of_Bhutan.svg.png"},
+            {"country":"Bolivia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Flag_of_Bolivia.svg/250px-Flag_of_Bolivia.svg.png"},
+            {"country":"Bosnia and Herzegovina","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Flag_of_Bosnia_and_Herzegovina.svg/250px-Flag_of_Bosnia_and_Herzegovina.svg.png"},
+            {"country":"Botswana","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_Botswana.svg/250px-Flag_of_Botswana.svg.png"},
+            {"country":"Brazil","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Flag_of_Brazil.svg/250px-Flag_of_Brazil.svg.png"},
+            {"country":"Brunei","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Flag_of_Brunei.svg/250px-Flag_of_Brunei.svg.png"},
+            {"country":"Bulgaria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Bulgaria.svg/250px-Flag_of_Bulgaria.svg.png"},
+            {"country":"Burkina Faso","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Flag_of_Burkina_Faso.svg/250px-Flag_of_Burkina_Faso.svg.png"},
+            {"country":"Burundi","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Flag_of_Burundi.svg/250px-Flag_of_Burundi.svg.png"},
+            {"country":"Cambodia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_Cambodia.svg/250px-Flag_of_Cambodia.svg.png"},
+            {"country":"Cameroon","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flag_of_Cameroon.svg/250px-Flag_of_Cameroon.svg.png"},
+            {"country":"Canada","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/250px-Flag_of_Canada_%28Pantone%29.svg.png"},
+            {"country":"Cape Verde","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Flag_of_Cape_Verde.svg/250px-Flag_of_Cape_Verde.svg.png"},
+            {"country":"Central African Republic","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Flag_of_the_Central_African_Republic.svg/250px-Flag_of_the_Central_African_Republic.svg.png"},
+            {"country":"Chad","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Flag_of_Chad.svg/250px-Flag_of_Chad.svg.png"},
+            {"country":"Chile","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Flag_of_Chile.svg/250px-Flag_of_Chile.svg.png"},
+            {"country":"China","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/250px-Flag_of_the_People%27s_Republic_of_China.svg.png"},
+            {"country":"Colombia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Colombia.svg/250px-Flag_of_Colombia.svg.png"},
+            {"country":"Comoros","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Flag_of_the_Comoros.svg/250px-Flag_of_the_Comoros.svg.png"},
+            {"country":"Costa Rica","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Flag_of_Costa_Rica.svg/250px-Flag_of_Costa_Rica.svg.png"},
+            {"country":"Croatia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Croatia.svg/250px-Flag_of_Croatia.svg.png"},
+            {"country":"Cuba","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Flag_of_Cuba.svg/250px-Flag_of_Cuba.svg.png"},
+            {"country":"Cyprus","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Flag_of_Cyprus.svg/250px-Flag_of_Cyprus.svg.png"},
+            {"country":"Czech Republic","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_Czech_Republic.svg/250px-Flag_of_the_Czech_Republic.svg.png"},
+            {"country":"Democratic Republic of the Congo","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Flag_of_the_Democratic_Republic_of_the_Congo.svg/250px-Flag_of_the_Democratic_Republic_of_the_Congo.svg.png"},
+            {"country":"Denmark","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Flag_of_Denmark.svg/250px-Flag_of_Denmark.svg.png"},
+            {"country":"Djibouti","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Flag_of_Djibouti.svg/250px-Flag_of_Djibouti.svg.png"},
+            {"country":"Dominica","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Flag_of_Dominica.svg/250px-Flag_of_Dominica.svg.png"},
+            {"country":"Ecuador","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Flag_of_Ecuador.svg/250px-Flag_of_Ecuador.svg.png"},
+            {"country":"Egypt","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Egypt.svg/250px-Flag_of_Egypt.svg.png"},
+            {"country":"Equatorial Guinea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Flag_of_Equatorial_Guinea.svg/250px-Flag_of_Equatorial_Guinea.svg.png"},
+            {"country":"Eritrea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Flag_of_Eritrea.svg/250px-Flag_of_Eritrea.svg.png"},
+            {"country":"Estonia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Flag_of_Estonia.svg/250px-Flag_of_Estonia.svg.png"},
+            {"country":"Eswatini","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Flag_of_Eswatini.svg/250px-Flag_of_Eswatini.svg.png"},
+            {"country":"Ethiopia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Flag_of_Ethiopia.svg/250px-Flag_of_Ethiopia.svg.png"},
+            {"country":"Fiji","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Fiji.svg/250px-Flag_of_Fiji.svg.png"},
+            {"country":"Finland","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Finland.svg/250px-Flag_of_Finland.svg.png"},
+            {"country":"France","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/250px-Flag_of_France.svg.png"},
+            {"country":"Gabon","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Flag_of_Gabon.svg/250px-Flag_of_Gabon.svg.png"},
+            {"country":"Georgia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/250px-Flag_of_Georgia.svg.png"},
+            {"country":"Germany","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/250px-Flag_of_Germany.svg.png"},
+            {"country":"Ghana","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Flag_of_Ghana.svg/250px-Flag_of_Ghana.svg.png"},
+            {"country":"Greece","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Greece.svg/250px-Flag_of_Greece.svg.png"},
+            {"country":"Grenada","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Grenada.svg/250px-Flag_of_Grenada.svg.png"},
+            {"country":"Guinea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Flag_of_Guinea.svg/250px-Flag_of_Guinea.svg.png"},
+            {"country":"Guinea-Bissau","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_Guinea-Bissau.svg/250px-Flag_of_Guinea-Bissau.svg.png"},
+            {"country":"Guyana","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Flag_of_Guyana.svg/250px-Flag_of_Guyana.svg.png"},
+            {"country":"Haiti","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Flag_of_Haiti_%28civil%29.svg/250px-Flag_of_Haiti_%28civil%29.svg.png"},
+            {"country":"Honduras","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_Honduras_%282022%E2%80%93present%29.svg/250px-Flag_of_Honduras_%282022%E2%80%93present%29.svg.png"},
+            {"country":"Hungary","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/250px-Flag_of_Hungary.svg.png"},
+            {"country":"Iceland","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Iceland.svg/250px-Flag_of_Iceland.svg.png"},
+            {"country":"India","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/250px-Flag_of_India.svg.png"},
+            {"country":"Indonesia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Flag_of_Indonesia.svg/250px-Flag_of_Indonesia.svg.png"},
+            {"country":"Iran","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Flag_of_Iran.svg/250px-Flag_of_Iran.svg.png"},
+            {"country":"Iraq","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Flag_of_Iraq.svg/250px-Flag_of_Iraq.svg.png"},
+            {"country":"Ireland","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Flag_of_Ireland.svg/250px-Flag_of_Ireland.svg.png"},
+            {"country":"Israel","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Flag_of_Israel.svg/250px-Flag_of_Israel.svg.png"},
+            {"country":"Italy","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/250px-Flag_of_Italy.svg.png"},
+            {"country":"Ivory Coast","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_C%C3%B4te_d%27Ivoire.svg/250px-Flag_of_C%C3%B4te_d%27Ivoire.svg.png"},
+            {"country":"Jamaica","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Flag_of_Jamaica.svg/250px-Flag_of_Jamaica.svg.png"},
+            {"country":"Japan","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/250px-Flag_of_Japan.svg.png"},
+            {"country":"Jordan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Flag_of_Jordan.svg/250px-Flag_of_Jordan.svg.png"},
+            {"country":"Kazakhstan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Flag_of_Kazakhstan.svg/250px-Flag_of_Kazakhstan.svg.png"},
+            {"country":"Kenya","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Kenya.svg/250px-Flag_of_Kenya.svg.png"},
+            {"country":"Kiribati","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Flag_of_Kiribati.svg/250px-Flag_of_Kiribati.svg.png"},
+            {"country":"Kosovo","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Flag_of_Kosovo.svg/250px-Flag_of_Kosovo.svg.png"},
+            {"country":"Kuwait","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Flag_of_Kuwait.svg/250px-Flag_of_Kuwait.svg.png"},
+            {"country":"Kyrgyzstan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Flag_of_Kyrgyzstan.svg/250px-Flag_of_Kyrgyzstan.svg.png"},
+            {"country":"Laos","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Flag_of_Laos.svg/250px-Flag_of_Laos.svg.png"},
+            {"country":"Latvia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Flag_of_Latvia.svg/250px-Flag_of_Latvia.svg.png"},
+            {"country":"Lebanon","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Flag_of_Lebanon.svg/250px-Flag_of_Lebanon.svg.png"},
+            {"country":"Lesotho","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Flag_of_Lesotho.svg/250px-Flag_of_Lesotho.svg.png"},
+            {"country":"Liberia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Flag_of_Liberia.svg/250px-Flag_of_Liberia.svg.png"},
+            {"country":"Libya","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Libya.svg/250px-Flag_of_Libya.svg.png"},
+            {"country":"Liechtenstein","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Flag_of_Liechtenstein.svg/250px-Flag_of_Liechtenstein.svg.png"},
+            {"country":"Lithuania","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Flag_of_Lithuania.svg/250px-Flag_of_Lithuania.svg.png"},
+            {"country":"Luxembourg","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Flag_of_Luxembourg.svg/250px-Flag_of_Luxembourg.svg.png"},
+            {"country":"Madagascar","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Madagascar.svg/250px-Flag_of_Madagascar.svg.png"},
+            {"country":"Malawi","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Flag_of_Malawi.svg/250px-Flag_of_Malawi.svg.png"},
+            {"country":"Malaysia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/250px-Flag_of_Malaysia.svg.png"},
+            {"country":"Maldives","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Maldives.svg/250px-Flag_of_Maldives.svg.png"},
+            {"country":"Mali","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_Mali.svg/250px-Flag_of_Mali.svg.png"},
+            {"country":"Malta","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flag_of_Malta.svg/250px-Flag_of_Malta.svg.png"},
+            {"country":"Marshall Islands","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Flag_of_the_Marshall_Islands.svg/250px-Flag_of_Marshall_Islands.svg.png"},
+            {"country":"Mauritania","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Flag_of_Mauritania.svg/250px-Flag_of_Mauritania.svg.png"},
+            {"country":"Mauritius","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_Mauritius.svg/250px-Flag_of_Mauritius.svg.png"},
+            {"country":"Mexico","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/250px-Flag_of_Mexico.svg.png"},
+            {"country":"Micronesia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Flag_of_the_Federated_States_of_Micronesia.svg/250px-Flag_of_the_Federated_States_of_Micronesia.svg.png"},
+            {"country":"Moldova","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Flag_of_Moldova.svg/250px-Flag_of_Moldova.svg.png"},
+            {"country":"Monaco","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Flag_of_Monaco.svg/250px-Flag_of_Monaco.svg.png"},
+            {"country":"Mongolia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Flag_of_Mongolia.svg/250px-Flag_of_Mongolia.svg.png"},
+            {"country":"Montenegro","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Montenegro.svg/250px-Flag_of_Montenegro.svg.png"},
+            {"country":"Morocco","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Flag_of_Morocco.svg/250px-Flag_of_Morocco.svg.png"},
+            {"country":"Mozambique","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Flag_of_Mozambique.svg/250px-Flag_of_Mozambique.svg.png"},
+            {"country":"Myanmar","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Flag_of_Myanmar.svg/250px-Flag_of_Myanmar.svg.png"},
+            {"country":"Namibia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Flag_of_Namibia.svg/250px-Flag_of_Namibia.svg.png"},
+            {"country":"Nauru","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Flag_of_Nauru.svg/250px-Flag_of_Nauru.svg.png"},
+            {"country":"Nepal","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/250px-Flag_of_Nepal.svg.png"},
+            {"country":"Netherlands","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Flag_of_the_Netherlands.svg/250px-Flag_of_the_Netherlands.svg.png"},
+            {"country":"New Zealand","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Flag_of_New_Zealand.svg/250px-Flag_of_New_Zealand.svg.png"},
+            {"country":"Nicaragua","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Flag_of_Nicaragua.svg/250px-Flag_of_Nicaragua.svg.png"},
+            {"country":"Niger","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Flag_of_Niger.svg/250px-Flag_of_Niger.svg.png"},
+            {"country":"Nigeria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/250px-Flag_of_Nigeria.svg.png"},
+            {"country":"Niue","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_Niue.svg/250px-Flag_of_Niue.svg.png"},
+            {"country":"North Korea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Flag_of_North_Korea.svg/250px-Flag_of_North_Korea.svg.png"},
+            {"country":"North Macedonia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_North_Macedonia.svg/250px-Flag_of_North_Macedonia.svg.png"},
+            {"country":"Northern Cyprus","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg/250px-Flag_of_the_Turkish_Republic_of_Northern_Cyprus.svg.png"},
+            {"country":"Norway","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Norway.svg/250px-Flag_of_Norway.svg.png"},
+            {"country":"Oman","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Flag_of_Oman.svg/250px-Flag_of_Oman.svg.png"},
+            {"country":"Pakistan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Flag_of_Pakistan.svg/250px-Flag_of_Pakistan.svg.png"},
+            {"country":"Palau","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Flag_of_Palau.svg/250px-Flag_of_Palau.svg.png"},
+            {"country":"Palestine","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Flag_of_Palestine.svg/250px-Flag_of_Palestine.svg.png"},
+            {"country":"Panama","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Flag_of_Panama.svg/250px-Flag_of_Panama.svg.png"},
+            {"country":"Papua New Guinea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Flag_of_Papua_New_Guinea.svg/250px-Flag_of_Papua_New_Guinea.svg.png"},
+            {"country":"Paraguay","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Flag_of_Paraguay.svg/250px-Flag_of_Paraguay.svg.png"},
+            {"country":"Peru","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Flag_of_Peru.svg/250px-Flag_of_Peru.svg.png"},
+            {"country":"Philippines","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Flag_of_the_Philippines.svg/250px-Flag_of_the_Philippines.svg.png"},
+            {"country":"Poland","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Flag_of_Poland.svg/250px-Flag_of_Poland.svg.png"},
+            {"country":"Portugal","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Flag_of_Portugal_%28official%29.svg/250px-Flag_of_Portugal_%28official%29.svg.png"},
+            {"country":"Qatar","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Flag_of_Qatar.svg/250px-Flag_of_Qatar.svg.png"},
+            {"country":"Republic of the Congo","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Flag_of_the_Republic_of_the_Congo.svg/250px-Flag_of_the_Republic_of_the_Congo.svg.png"},
+            {"country":"Romania","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flag_of_Romania.svg/250px-Flag_of_Romania.svg.png"},
+            {"country":"Russia","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Flag_of_Russia.svg/250px-Flag_of_Russia.svg.png"},
+            {"country":"Rwanda","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Flag_of_Rwanda.svg/250px-Flag_of_Rwanda.svg.png"},
+            {"country":"Sahrawi Arab Democratic Republic","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Flag_of_the_Sahrawi_Arab_Democratic_Republic.svg/250px-Flag_of_the_Sahrawi_Arab_Democratic_Republic.svg.png"},
+            {"country":"Saint Kitts and Nevis","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Saint_Kitts_and_Nevis.svg/250px-Flag_of_Saint_Kitts_and_Nevis.svg.png"},
+            {"country":"Saint Lucia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Flag_of_Saint_Lucia.svg/250px-Flag_of_Saint_Lucia.svg.png"},
+            {"country":"Saint Vincent and the Grenadines","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Flag_of_Saint_Vincent_and_the_Grenadines.svg/250px-Flag_of_Saint_Vincent_and_the_Grenadines.svg.png"},
+            {"country":"Samoa","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Flag_of_Samoa.svg/250px-Flag_of_Samoa.svg.png"},
+            {"country":"San Marino","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Flag_of_San_Marino.svg/250px-Flag_of_San_Marino.svg.png"},
+            {"country":"Saudi Arabia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/250px-Flag_of_Saudi_Arabia.svg.png"},
+            {"country":"Senegal","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Flag_of_Senegal.svg/250px-Flag_of_Senegal.svg.png"},
+            {"country":"Seychelles","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Seychelles.svg/250px-Flag_of_Seychelles.svg.png"},
+            {"country":"Sierra Leone","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Flag_of_Sierra_Leone.svg/250px-Flag_of_Sierra_Leone.svg.png"},
+            {"country":"Singapore","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Flag_of_Singapore.svg/250px-Flag_of_Singapore.svg.png"},
+            {"country":"Slovakia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Flag_of_Slovakia.svg/250px-Flag_of_Slovakia.svg.png"},
+            {"country":"Slovenia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Flag_of_Slovenia.svg/250px-Flag_of_Slovenia.svg.png"},
+            {"country":"Solomon Islands","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Flag_of_the_Solomon_Islands.svg/250px-Flag_of_the_Solomon_Islands.svg.png"},
+            {"country":"Somalia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Flag_of_Somalia.svg/250px-Flag_of_Somalia.svg.png"},
+            {"country":"Somaliland","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Flag_of_Somaliland.svg/250px-Flag_of_Somaliland.svg.png"},
+            {"country":"South Africa","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Flag_of_South_Africa.svg/250px-Flag_of_South_Africa.svg.png"},
+            {"country":"South Korea","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/250px-Flag_of_South_Korea.svg.png"},
+            {"country":"South Ossetia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Flag_of_South_Ossetia.svg/250px-Flag_of_South_Ossetia.svg.png"},
+            {"country":"South Sudan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Flag_of_South_Sudan.svg/250px-Flag_of_South_Sudan.svg.png"},
+            {"country":"Spain","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Flag_of_Spain_%28civil%29.svg/250px-Flag_of_Spain_%28civil%29.svg.png"},
+            {"country":"Sri Lanka","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Flag_of_Sri_Lanka.svg/250px-Flag_of_Sri_Lanka.svg.png"},
+            {"country":"Sudan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Flag_of_Sudan.svg/250px-Flag_of_Sudan.svg.png"},
+            {"country":"Suriname","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Flag_of_Suriname.svg/250px-Flag_of_Suriname.svg.png"},
+            {"country":"Sweden","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/Flag_of_Sweden.svg/250px-Flag_of_Sweden.svg.png"},
+            {"country":"Switzerland","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Switzerland.svg/250px-Flag_of_Switzerland.svg.png"},
+            {"country":"Syria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Flag_of_Syria_%282025-%29.svg/250px-Flag_of_Syria_%282025-%29.svg.png"},
+            {"country":"São Tomé and Príncipe","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Flag_of_S%C3%A3o_Tom%C3%A9_and_Pr%C3%ADncipe.svg/250px-Flag_of_S%C3%A3o_Tom%C3%A9_and_Pr%C3%ADncipe.svg.png"},
+            {"country":"Taiwan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Flag_of_the_Republic_of_China.svg/250px-Flag_of_the_Republic_of_China.svg.png"},
+            {"country":"Tajikistan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Flag_of_Tajikistan.svg/250px-Flag_of_Tajikistan.svg.png"},
+            {"country":"Tanzania","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Flag_of_Tanzania.svg/250px-Flag_of_Tanzania.svg.png"},
+            {"country":"Thailand","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Flag_of_Thailand.svg/250px-Flag_of_Thailand.svg.png"},
+            {"country":"The Bahamas","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Flag_of_the_Bahamas.svg/250px-Flag_of_the_Bahamas.svg.png"},
+            {"country":"The Cook Islands","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_the_Cook_Islands.svg/250px-Flag_of_the_Cook_Islands.svg.png"},
+            {"country":"The Gambia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_The_Gambia.svg/250px-Flag_of_The_Gambia.svg.png"},
+            {"country":"Timor-Leste","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Flag_of_East_Timor.svg/250px-Flag_of_East_Timor.svg.png"},
+            {"country":"Togo","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Flag_of_Togo_%283-2%29.svg/250px-Flag_of_Togo_%283-2%29.svg.png"},
+            {"country":"Tonga","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Tonga.svg/250px-Flag_of_Tonga.svg.png"},
+            {"country":"Transnistria","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Transnistria_%28state%29.svg/250px-Flag_of_Transnistria_%28state%29.svg.png"},
+            {"country":"Trinidad and Tobago","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Trinidad_and_Tobago.svg/250px-Flag_of_Trinidad_and_Tobago.svg.png"},
+            {"country":"Tunisia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Tunisia.svg/250px-Flag_of_Tunisia.svg.png"},
+            {"country":"Turkey","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Flag_of_Turkey.svg/250px-Flag_of_Turkey.svg.png"},
+            {"country":"Turkmenistan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Flag_of_Turkmenistan.svg/250px-Flag_of_Turkmenistan.svg.png"},
+            {"country":"Tuvalu","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Flag_of_Tuvalu.svg/250px-Flag_of_Tuvalu.svg.png"},
+            {"country":"Uganda","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Flag_of_Uganda.svg/250px-Flag_of_Uganda.svg.png"},
+            {"country":"Ukraine","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Ukraine.svg/250px-Flag_of_Ukraine.svg.png"},
+            {"country":"United Arab Emirates","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Flag_of_the_United_Arab_Emirates.svg/250px-Flag_of_the_United_Arab_Emirates.svg.png"},
+            {"country":"United Kingdom","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/250px-Flag_of_the_United_Kingdom.svg.png"},
+            {"country":"United States","flag_url":"https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/250px-Flag_of_the_United_States.svg.png"},
+            {"country":"Uruguay","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Uruguay.svg/250px-Flag_of_Uruguay.svg.png"},
+            {"country":"Uzbekistan","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Flag_of_Uzbekistan.svg/250px-Flag_of_Uzbekistan.svg.png"},
+            {"country":"Vanuatu","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Vanuatu.svg/250px-Flag_of_Vanuatu.svg.png"},
+            {"country":"Vatican City","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Flag_of_Vatican_City_%282023%E2%80%93present%29.svg/250px-Flag_of_Vatican_City_%282023%E2%80%93present%29.svg.png"},
+            {"country":"Venezuela","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Flag_of_Venezuela.svg/250px-Flag_of_Venezuela.svg.png"},
+            {"country":"Vietnam","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/250px-Flag_of_Vietnam.svg.png"},
+            {"country":"Yemen","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Flag_of_Yemen.svg/250px-Flag_of_Yemen.svg.png"},
+            {"country":"Zambia","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Flag_of_Zambia.svg/250px-Flag_of_Zambia.svg.png"},
+            {"country":"Zimbabwe","flag_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Flag_of_Zimbabwe.svg/250px-Flag_of_Zimbabwe.svg.png"}
+        ];
+
+        // Well-known countries for Easy mode
+        const EASY_COUNTRIES = [
+            'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Italy',
+            'Spain', 'Japan', 'China', 'India', 'Brazil', 'Mexico', 'Russia', 'South Korea',
+            'Netherlands', 'Sweden', 'Norway', 'Greece', 'Egypt', 'Turkey', 'Argentina',
+            'Switzerland', 'Poland', 'Portugal', 'Ireland', 'New Zealand', 'South Africa',
+            'Israel', 'Saudi Arabia'
+        ];
+
+        // Game state
+        let gameState = {
+            difficulty: null,
+            mode: null,
+            gameType: null,
+            flags: [],
+            currentIndex: 0,
+            score: 0,
+            lives: 3,
+            hintsUsed: 0,
+            incorrectAnswers: [],
+            hintUsedThisQuestion: false
+        };
+
+        function selectDifficulty(difficulty) {
+            gameState.difficulty = difficulty;
+            updateStartButton();
+        }
+
+        function selectMode(mode) {
+            gameState.mode = mode;
+            updateStartButton();
+        }
+
+        function selectGameType(gameType) {
+            gameState.gameType = gameType;
+            updateStartButton();
+        }
+
+        function updateStartButton() {
+            const container = document.getElementById('startButtonContainer');
+            if (gameState.difficulty && gameState.mode && gameState.gameType) {
+                container.innerHTML = '<button class="btn btn-success" onclick="startGame()">Start Game</button>';
+            }
+        }
+
+        function startGame() {
+            // Prepare flag dataset based on difficulty
+            let availableFlags = [...FLAGS_DATA];
+
+            if (gameState.difficulty === 'easy') {
+                availableFlags = FLAGS_DATA.filter(f => EASY_COUNTRIES.includes(f.country));
+            } else if (gameState.difficulty === 'medium') {
+                // Mix of easy countries plus others
+                const easyFlags = FLAGS_DATA.filter(f => EASY_COUNTRIES.includes(f.country));
+                const otherFlags = FLAGS_DATA.filter(f => !EASY_COUNTRIES.includes(f.country));
+                availableFlags = [...easyFlags, ...shuffleArray(otherFlags).slice(0, 50)];
+            }
+
+            // Shuffle and set flags
+            gameState.flags = shuffleArray(availableFlags);
+            gameState.currentIndex = 0;
+            gameState.score = 0;
+            gameState.lives = 3;
+            gameState.hintsUsed = 0;
+            gameState.incorrectAnswers = [];
+
+            // Switch to game screen
+            showScreen('gameScreen');
+
+            // Start the appropriate game type
+            if (gameState.gameType === 'multipleChoice') {
+                showMultipleChoiceQuestion();
+            } else if (gameState.gameType === 'typeAnswer') {
+                showTypeAnswerQuestion();
+            } else if (gameState.gameType === 'matchPairs') {
+                showMatchPairsGame();
+            }
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateProgress() {
+            const progress = document.getElementById('progressFill');
+            const percent = (gameState.currentIndex / gameState.flags.length) * 100;
+            progress.style.width = percent + '%';
+            progress.textContent = `${gameState.currentIndex} / ${gameState.flags.length}`;
+
+            if (gameState.mode === 'challenge') {
+                const livesDisplay = document.getElementById('livesDisplay');
+                livesDisplay.style.display = 'block';
+                livesDisplay.innerHTML = `<strong>Lives: ${gameState.lives}</strong> ❤️`.repeat(gameState.lives);
+            }
+        }
+
+        // MULTIPLE CHOICE MODE
+        function showMultipleChoiceQuestion() {
+            gameState.hintUsedThisQuestion = false;
+            updateProgress();
+
+            const currentFlag = gameState.flags[gameState.currentIndex];
+            const wrongOptions = shuffleArray(
+                FLAGS_DATA.filter(f => f.country !== currentFlag.country)
+            ).slice(0, 3);
+
+            const allOptions = shuffleArray([currentFlag, ...wrongOptions]);
+
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <div class="flag-display">
+                    <img src="${currentFlag.flag_url}" alt="Flag" class="flag-img">
+                </div>
+                <h3 style="text-align: center; margin: 20px 0; color: #667eea;">Which country does this flag belong to?</h3>
+                <div class="option-grid">
+                    ${allOptions.map(opt => `
+                        <button class="option-btn" onclick="checkMultipleChoice('${opt.country.replace(/'/g, "\\'")}', '${currentFlag.country.replace(/'/g, "\\'")}')">
+                            ${opt.country}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            setupHintButton(currentFlag.country);
+        }
+
+        function checkMultipleChoice(selectedCountry, correctCountry) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.trim() === correctCountry) {
+                    btn.classList.add('correct');
+                }
+                if (btn.textContent.trim() === selectedCountry && selectedCountry !== correctCountry) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (selectedCountry === correctCountry) {
+                gameState.score++;
+                setTimeout(nextQuestion, 1000);
+            } else {
+                handleIncorrectAnswer(correctCountry);
+                setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        // TYPE ANSWER MODE
+        function showTypeAnswerQuestion() {
+            gameState.hintUsedThisQuestion = false;
+            updateProgress();
+
+            const currentFlag = gameState.flags[gameState.currentIndex];
+
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <div class="flag-display">
+                    <img src="${currentFlag.flag_url}" alt="Flag" class="flag-img">
+                </div>
+                <h3 style="text-align: center; margin: 20px 0; color: #667eea;">Type the country name:</h3>
+                <div class="input-container">
+                    <input type="text" id="answerInput" class="answer-input" placeholder="Enter country name"
+                           onkeypress="if(event.key==='Enter') checkTypeAnswer()">
+                </div>
+            `;
+
+            document.getElementById('actionButtons').innerHTML = `
+                <button class="btn" onclick="checkTypeAnswer()">Submit Answer</button>
+            `;
+
+            setupHintButton(currentFlag.country);
+            document.getElementById('answerInput').focus();
+        }
+
+        function checkTypeAnswer() {
+            const input = document.getElementById('answerInput');
+            const userAnswer = input.value.trim();
+            const correctAnswer = gameState.flags[gameState.currentIndex].country;
+
+            if (!userAnswer) return;
+
+            input.disabled = true;
+            document.getElementById('actionButtons').innerHTML = '';
+
+            // Fuzzy matching - check if the answer is close enough
+            const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase() ||
+                            normalizeCountryName(userAnswer) === normalizeCountryName(correctAnswer);
+
+            const gameContent = document.getElementById('gameContent');
+            if (isCorrect) {
+                gameState.score++;
+                gameContent.innerHTML += '<div class="hint-box" style="background: #d4edda; border-color: #28a745;">✓ Correct!</div>';
+                setTimeout(nextQuestion, 1000);
+            } else {
+                handleIncorrectAnswer(correctAnswer);
+                gameContent.innerHTML += `<div class="hint-box" style="background: #f8d7da; border-color: #dc3545;">✗ Incorrect! The answer was: <strong>${correctAnswer}</strong></div>`;
+                setTimeout(nextQuestion, 2000);
+            }
+        }
+
+        function normalizeCountryName(name) {
+            return name.toLowerCase()
+                .replace(/^the\s+/i, '')
+                .replace(/[^a-z]/g, '');
+        }
+
+        // MATCH PAIRS MODE
+        function showMatchPairsGame() {
+            gameState.hintUsedThisQuestion = false;
+            updateProgress();
+
+            // Take 6 flags for matching
+            const matchFlags = gameState.flags.slice(gameState.currentIndex, gameState.currentIndex + 6);
+            if (matchFlags.length < 6) {
+                // Not enough flags left, end game
+                showResults();
+                return;
+            }
+
+            const shuffledCountries = shuffleArray([...matchFlags]);
+            const shuffledFlags = shuffleArray([...matchFlags]);
+
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <h3 style="text-align: center; margin: 20px 0; color: #667eea;">Match the flags with their countries</h3>
+                <p class="info-text">Click a flag, then click its matching country name</p>
+                <div class="match-grid">
+                    <div class="match-column">
+                        ${shuffledFlags.map((flag, idx) => `
+                            <div class="match-item" data-country="${flag.country}" data-type="flag" onclick="selectMatchItem(this)">
+                                <img src="${flag.flag_url}" class="match-flag" alt="Flag">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="match-column">
+                        ${shuffledCountries.map((flag, idx) => `
+                            <div class="match-item" data-country="${flag.country}" data-type="country" onclick="selectMatchItem(this)">
+                                ${flag.country}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            gameState.matchState = {
+                selectedFlag: null,
+                selectedCountry: null,
+                matchedCount: 0,
+                totalMatches: 6
+            };
+
+            document.getElementById('hintContainer').innerHTML = '';
+            document.getElementById('actionButtons').innerHTML = '';
+        }
+
+        function selectMatchItem(element) {
+            if (element.classList.contains('matched')) return;
+
+            const type = element.dataset.type;
+            const country = element.dataset.country;
+
+            // Deselect previous selection of same type
+            document.querySelectorAll(`.match-item[data-type="${type}"].selected`).forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            element.classList.add('selected');
+
+            if (type === 'flag') {
+                gameState.matchState.selectedFlag = country;
+            } else {
+                gameState.matchState.selectedCountry = country;
+            }
+
+            // Check if we have both selections
+            if (gameState.matchState.selectedFlag && gameState.matchState.selectedCountry) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const flagCountry = gameState.matchState.selectedFlag;
+            const selectedCountry = gameState.matchState.selectedCountry;
+
+            const flagElement = document.querySelector(`.match-item[data-type="flag"][data-country="${flagCountry}"]`);
+            const countryElement = document.querySelector(`.match-item[data-type="country"][data-country="${selectedCountry}"]`);
+
+            if (flagCountry === selectedCountry) {
+                // Correct match
+                flagElement.classList.remove('selected');
+                countryElement.classList.remove('selected');
+                flagElement.classList.add('matched');
+                countryElement.classList.add('matched');
+
+                gameState.matchState.matchedCount++;
+                gameState.score++;
+
+                if (gameState.matchState.matchedCount === gameState.matchState.totalMatches) {
+                    // All matched, move to next set
+                    gameState.currentIndex += 6;
+                    setTimeout(() => {
+                        if (gameState.currentIndex >= gameState.flags.length) {
+                            showResults();
+                        } else {
+                            showMatchPairsGame();
+                        }
+                    }, 1000);
+                }
+            } else {
+                // Incorrect match
+                flagElement.classList.add('incorrect-match');
+                countryElement.classList.add('incorrect-match');
+
+                handleIncorrectAnswer(flagCountry);
+
+                setTimeout(() => {
+                    flagElement.classList.remove('selected', 'incorrect-match');
+                    countryElement.classList.remove('selected', 'incorrect-match');
+                }, 500);
+            }
+
+            gameState.matchState.selectedFlag = null;
+            gameState.matchState.selectedCountry = null;
+        }
+
+        // HINT SYSTEM
+        function setupHintButton(correctCountry) {
+            const hintContainer = document.getElementById('hintContainer');
+            if (gameState.mode === 'practice') {
+                hintContainer.innerHTML = '<button class="btn btn-secondary" onclick="showHint(\'' +
+                    correctCountry.replace(/'/g, "\\'") + '\')">Show Hint</button>';
+            } else {
+                hintContainer.innerHTML = '';
+            }
+        }
+
+        function showHint(correctCountry) {
+            if (gameState.hintUsedThisQuestion) return;
+
+            gameState.hintUsedThisQuestion = true;
+            gameState.hintsUsed++;
+
+            const firstLetter = correctCountry.charAt(0);
+            const length = correctCountry.length;
+
+            const hintContainer = document.getElementById('hintContainer');
+            hintContainer.innerHTML = `
+                <div class="hint-box">
+                    Hint: The country starts with "${firstLetter}" and has ${length} letters
+                </div>
+            `;
+        }
+
+        // HANDLE INCORRECT ANSWERS
+        function handleIncorrectAnswer(correctCountry) {
+            const currentFlag = gameState.flags[gameState.currentIndex];
+            gameState.incorrectAnswers.push({
+                country: correctCountry,
+                flag: currentFlag.flag_url
+            });
+
+            if (gameState.mode === 'challenge') {
+                gameState.lives--;
+                if (gameState.lives <= 0) {
+                    showResults();
+                }
+            }
+        }
+
+        // NAVIGATION
+        function nextQuestion() {
+            gameState.currentIndex++;
+
+            if (gameState.currentIndex >= gameState.flags.length || gameState.lives <= 0) {
+                showResults();
+                return;
+            }
+
+            if (gameState.gameType === 'multipleChoice') {
+                showMultipleChoiceQuestion();
+            } else if (gameState.gameType === 'typeAnswer') {
+                showTypeAnswerQuestion();
+            }
+        }
+
+        // RESULTS
+        function showResults() {
+            showScreen('resultsScreen');
+
+            const totalQuestions = gameState.gameType === 'matchPairs' ?
+                Math.min(gameState.currentIndex, gameState.flags.length) : gameState.currentIndex;
+            const accuracy = totalQuestions > 0 ? ((gameState.score / totalQuestions) * 100).toFixed(1) : 0;
+
+            const resultsStats = document.getElementById('resultsStats');
+            resultsStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-number">${gameState.score}</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${totalQuestions}</div>
+                    <div class="stat-label">Total Questions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${accuracy}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                ${gameState.mode === 'practice' ? `
+                <div class="stat-item">
+                    <div class="stat-number">${gameState.hintsUsed}</div>
+                    <div class="stat-label">Hints Used</div>
+                </div>
+                ` : ''}
+            `;
+
+            // Show incorrect answers
+            const incorrectList = document.getElementById('incorrectList');
+            if (gameState.incorrectAnswers.length > 0) {
+                incorrectList.innerHTML = `
+                    <h3 style="text-align: center; color: #667eea; margin-bottom: 20px;">Review These Flags:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                        ${gameState.incorrectAnswers.map(item => `
+                            <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                                <img src="${item.flag}" style="max-width: 150px; border-radius: 5px; margin-bottom: 10px;">
+                                <div style="font-weight: 600; color: #667eea;">${item.country}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function restartApp() {
+            gameState = {
+                difficulty: null,
+                mode: null,
+                gameType: null,
+                flags: [],
+                currentIndex: 0,
+                score: 0,
+                lives: 3,
+                hintsUsed: 0,
+                incorrectAnswers: [],
+                hintUsedThisQuestion: false
+            };
+
+            document.getElementById('startButtonContainer').innerHTML = '';
+            document.getElementById('gameContent').innerHTML = '';
+            document.getElementById('hintContainer').innerHTML = '';
+            document.getElementById('actionButtons').innerHTML = '';
+
+            showScreen('welcomeScreen');
+        }
+    </script>
+</body>
+</html>

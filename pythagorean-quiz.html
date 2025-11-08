@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pythagorean Theorem Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .setup-screen, .quiz-screen, .results-screen {
+            display: none;
+        }
+
+        .setup-screen.active, .quiz-screen.active, .results-screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary-button {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            margin-top: 10px;
+        }
+
+        .secondary-button:hover {
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .question-progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .question-text {
+            text-align: center;
+            font-size: 1.1em;
+            color: #333;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .timer {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            min-height: 24px;
+        }
+
+        .feedback.correct {
+            color: #4caf50;
+        }
+
+        .feedback.incorrect {
+            color: #f44336;
+        }
+
+        .stats {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 3em;
+            color: #27ae60;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .congratulations {
+            text-align: center;
+            color: #4caf50;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .formula-box {
+            background: #e8f5e9;
+            border: 2px solid #27ae60;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .formula {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #27ae60;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .formula-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .hint-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .hint-section.visible {
+            display: block;
+        }
+
+        .hint-text {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .explanation {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .explanation.visible {
+            display: block;
+        }
+
+        .explanation-text {
+            color: #0d47a1;
+            line-height: 1.6;
+        }
+
+        .intro-text {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pythagorean Theorem Quiz</h1>
+
+        <!-- Setup Screen -->
+        <div class="setup-screen active">
+            <div class="intro-text">
+                Test your knowledge of the Pythagorean theorem! You'll solve problems involving right triangles and real-world applications. Remember: <strong>a² + b² = c²</strong>
+            </div>
+            <div class="form-group">
+                <label for="difficulty">Difficulty Level:</label>
+                <select id="difficulty">
+                    <option value="easy" selected>Easy (Simple triples, find hypotenuse)</option>
+                    <option value="medium">Medium (Larger numbers, find any side)</option>
+                    <option value="hard">Hard (Decimals, word problems, concepts)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="questionCount">Number of Questions:</label>
+                <input type="number" id="questionCount" value="5" min="1" max="10">
+            </div>
+            <button onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="quiz-screen">
+            <div class="question-progress" id="progress"></div>
+            <div class="timer" id="timer">Time: 0:00</div>
+
+            <div class="formula-box">
+                <div class="formula">a² + b² = c²</div>
+                <div class="formula-label">where c is the hypotenuse (longest side)</div>
+            </div>
+
+            <div class="question-text" id="questionText"></div>
+
+            <div class="diagram-container" id="diagramContainer"></div>
+
+            <div class="hint-section" id="hintSection">
+                <strong>Hint:</strong>
+                <div class="hint-text" id="hintText"></div>
+            </div>
+
+            <div class="explanation" id="explanationSection">
+                <strong>Explanation:</strong>
+                <div class="explanation-text" id="explanationText"></div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="answer" placeholder="Type your answer" autocomplete="off">
+            </div>
+
+            <div class="button-group">
+                <button onclick="showHint()">Show Hint (-5 pts)</button>
+                <button onclick="checkAnswer()">Submit Answer</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen">
+            <div class="congratulations">Congratulations!</div>
+            <div class="score" id="scoreDisplay"></div>
+            <div class="stats">
+                <div class="stat-row">
+                    <span class="stat-label">Questions:</span>
+                    <span class="stat-value" id="totalQuestions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Correct First Try:</span>
+                    <span class="stat-value" id="correctFirstTry"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total Attempts:</span>
+                    <span class="stat-value" id="totalAttempts"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Hints Used:</span>
+                    <span class="stat-value" id="hintsUsed"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Time:</span>
+                    <span class="stat-value" id="totalTime"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Final Score:</span>
+                    <span class="stat-value" id="scoreValue"></span>
+                </div>
+            </div>
+            <button onclick="resetQuiz()">Start New Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz state
+        let difficulty = 'easy';
+        let totalQuestions = 10;
+        let currentQuestion = 0;
+        let attempts = 0;
+        let correctFirstTry = 0;
+        let hintsUsedCount = 0;
+        let currentQuestionAttempts = 0;
+        let currentHintUsed = false;
+        let startTime;
+        let timerInterval;
+        let currentAnswer;
+        let currentQuestionData;
+        let totalScore = 0;
+        let maxScore = 0;
+
+        // Pythagorean triples for easy/medium difficulty
+        const pythagoreanTriples = [
+            [3, 4, 5],
+            [5, 12, 13],
+            [8, 15, 17],
+            [7, 24, 25],
+            [6, 8, 10],
+            [9, 12, 15],
+            [12, 16, 20],
+            [15, 20, 25],
+            [9, 40, 41],
+            [11, 60, 61],
+            [13, 84, 85],
+            [20, 21, 29]
+        ];
+
+        // Word problem templates
+        const wordProblems = [
+            {
+                template: "A ladder is {c} feet long and is placed {b} feet from the base of a wall. How high up the wall does the ladder reach?",
+                findSide: 'a',
+                unit: 'feet'
+            },
+            {
+                template: "A baseball diamond is a square with each side being {a} feet. How far is it from home plate to second base (diagonal)?",
+                findSide: 'c',
+                unit: 'feet',
+                useSquare: true
+            },
+            {
+                template: "A TV screen measures {a} inches tall and {b} inches wide. What is the diagonal screen size?",
+                findSide: 'c',
+                unit: 'inches'
+            },
+            {
+                template: "A rectangular park is {a} meters long and {b} meters wide. What is the shortest distance from one corner to the opposite corner?",
+                findSide: 'c',
+                unit: 'meters'
+            },
+            {
+                template: "A kite is flying on a string that is {c} meters long. The kite is {b} meters horizontally from where you're standing. How high is the kite?",
+                findSide: 'a',
+                unit: 'meters'
+            }
+        ];
+
+        function startQuiz() {
+            difficulty = document.getElementById('difficulty').value;
+            totalQuestions = parseInt(document.getElementById('questionCount').value);
+
+            if (totalQuestions < 1) totalQuestions = 1;
+            if (totalQuestions > 10) totalQuestions = 10;
+
+            currentQuestion = 0;
+            attempts = 0;
+            correctFirstTry = 0;
+            hintsUsedCount = 0;
+            startTime = Date.now();
+            totalScore = 0;
+            maxScore = 0;
+
+            showScreen('quiz-screen');
+            startTimer();
+            nextQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent =
+                    `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+
+            if (currentQuestion > totalQuestions) {
+                endQuiz();
+                return;
+            }
+
+            currentQuestionAttempts = 0;
+            currentHintUsed = false;
+            document.getElementById('hintSection').classList.remove('visible');
+            document.getElementById('explanationSection').classList.remove('visible');
+
+            // Determine question type
+            const rand = Math.random();
+            let questionType;
+
+            if (difficulty === 'easy') {
+                questionType = rand < 0.8 ? 'basic' : 'word';
+            } else if (difficulty === 'medium') {
+                questionType = rand < 0.6 ? 'basic' : 'word';
+            } else {
+                questionType = rand < 0.4 ? 'basic' : (rand < 0.7 ? 'word' : 'concept');
+            }
+
+            if (questionType === 'basic') {
+                generateBasicQuestion();
+            } else if (questionType === 'word') {
+                generateWordProblem();
+            } else {
+                generateConceptQuestion();
+            }
+
+            maxScore += 100;
+
+            document.getElementById('progress').textContent =
+                `Question ${currentQuestion} of ${totalQuestions}`;
+            document.getElementById('answer').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('answer').focus();
+        }
+
+        function generateBasicQuestion() {
+            let a, b, c, findSide;
+
+            if (difficulty === 'easy') {
+                // Use small Pythagorean triples, only find hypotenuse
+                const triple = pythagoreanTriples[Math.floor(Math.random() * 5)];
+                [a, b, c] = triple;
+                findSide = 'c';
+            } else if (difficulty === 'medium') {
+                // Use any triple, find any side
+                const triple = pythagoreanTriples[Math.floor(Math.random() * pythagoreanTriples.length)];
+                [a, b, c] = triple;
+                const sides = ['a', 'b', 'c'];
+                findSide = sides[Math.floor(Math.random() * sides.length)];
+            } else {
+                // Hard: generate random values that may need decimals
+                if (Math.random() < 0.5) {
+                    // Use a triple but find a leg
+                    const triple = pythagoreanTriples[Math.floor(Math.random() * pythagoreanTriples.length)];
+                    [a, b, c] = triple;
+                    findSide = Math.random() < 0.5 ? 'a' : 'b';
+                } else {
+                    // Generate random values
+                    a = Math.floor(Math.random() * 15) + 5;
+                    b = Math.floor(Math.random() * 15) + 5;
+                    c = Math.sqrt(a * a + b * b);
+                    findSide = 'c';
+                }
+            }
+
+            currentQuestionData = { a, b, c, findSide, type: 'basic' };
+
+            // Build question text
+            let questionText = 'Find the missing side of this right triangle:<br><br>';
+
+            if (findSide === 'a') {
+                questionText += `Side a = ?<br>Side b = ${b}<br>Hypotenuse c = ${c}`;
+                currentAnswer = Math.round(Math.sqrt(c * c - b * b) * 10) / 10;
+            } else if (findSide === 'b') {
+                questionText += `Side a = ${a}<br>Side b = ?<br>Hypotenuse c = ${c}`;
+                currentAnswer = Math.round(Math.sqrt(c * c - a * a) * 10) / 10;
+            } else {
+                questionText += `Side a = ${a}<br>Side b = ${b}<br>Hypotenuse c = ?`;
+                currentAnswer = Math.round(Math.sqrt(a * a + b * b) * 10) / 10;
+            }
+
+            document.getElementById('questionText').innerHTML = questionText;
+            drawTriangle(a, b, c, findSide);
+        }
+
+        function generateWordProblem() {
+            const problemTemplate = wordProblems[Math.floor(Math.random() * wordProblems.length)];
+
+            let triple, a, b, c;
+
+            if (difficulty === 'hard') {
+                triple = pythagoreanTriples[Math.floor(Math.random() * pythagoreanTriples.length)];
+            } else {
+                triple = pythagoreanTriples[Math.floor(Math.random() * 5)];
+            }
+
+            [a, b, c] = triple;
+
+            // For square problems, make both legs equal
+            if (problemTemplate.useSquare) {
+                a = b;
+                c = Math.round(Math.sqrt(a * a + b * b) * 10) / 10;
+            }
+
+            const findSide = problemTemplate.findSide;
+
+            // Replace placeholders in template
+            let questionText = problemTemplate.template
+                .replace('{a}', a)
+                .replace('{b}', b)
+                .replace('{c}', c);
+
+            if (findSide === 'a') {
+                currentAnswer = Math.round(Math.sqrt(c * c - b * b) * 10) / 10;
+            } else if (findSide === 'b') {
+                currentAnswer = Math.round(Math.sqrt(c * c - a * a) * 10) / 10;
+            } else {
+                currentAnswer = Math.round(Math.sqrt(a * a + b * b) * 10) / 10;
+            }
+
+            currentQuestionData = { a, b, c, findSide, type: 'word', unit: problemTemplate.unit };
+
+            document.getElementById('questionText').innerHTML = questionText + `<br><br>(Round to 1 decimal place)`;
+            drawTriangle(a, b, c, findSide);
+        }
+
+        function generateConceptQuestion() {
+            // Concept questions for hard difficulty
+            const conceptTypes = ['identify', 'verify'];
+            const conceptType = conceptTypes[Math.floor(Math.random() * conceptTypes.length)];
+
+            if (conceptType === 'identify') {
+                // Multiple choice: which shows a right triangle?
+                const triple = pythagoreanTriples[Math.floor(Math.random() * pythagoreanTriples.length)];
+                const [a, b, c] = triple;
+
+                document.getElementById('questionText').innerHTML =
+                    `Which set of sides can form a right triangle?<br><br>` +
+                    `Type A, B, C, or D:<br><br>` +
+                    `A) ${a}, ${b}, ${c}<br>` +
+                    `B) ${a + 1}, ${b}, ${c}<br>` +
+                    `C) ${a}, ${b + 1}, ${c}<br>` +
+                    `D) ${a}, ${b}, ${c + 1}`;
+
+                currentAnswer = 'A';
+                currentQuestionData = { type: 'concept', conceptType: 'identify' };
+                document.getElementById('diagramContainer').innerHTML = '';
+            } else {
+                // True/False: Is this a right triangle?
+                const triple = pythagoreanTriples[Math.floor(Math.random() * pythagoreanTriples.length)];
+                let [a, b, c] = triple;
+
+                const isRight = Math.random() < 0.5;
+                if (!isRight) {
+                    c += Math.floor(Math.random() * 3) + 1;
+                }
+
+                document.getElementById('questionText').innerHTML =
+                    `Is a triangle with sides ${a}, ${b}, and ${c} a right triangle?<br><br>` +
+                    `Type YES or NO`;
+
+                currentAnswer = isRight ? 'YES' : 'NO';
+                currentQuestionData = { type: 'concept', conceptType: 'verify', a, b, c };
+                drawTriangle(a, b, c, 'none');
+            }
+        }
+
+        function drawTriangle(a, b, c, missing) {
+            // Set target dimensions for the triangle
+            const targetWidth = 350;
+            const targetHeight = 350;
+            const padding = 80;
+
+            // Calculate scale to fit the triangle in the available space
+            const maxAvailableWidth = targetWidth - padding;
+            const maxAvailableHeight = targetHeight - padding;
+
+            const scaleX = maxAvailableWidth / b;
+            const scaleY = maxAvailableHeight / a;
+            const scale = Math.min(scaleX, scaleY);
+
+            // Calculate actual dimensions
+            const actualWidth = b * scale + padding;
+            const actualHeight = a * scale + padding;
+
+            const svg = `
+                <svg width="${actualWidth}" height="${actualHeight}" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Triangle -->
+                    <line x1="40" y1="${actualHeight - 40}" x2="${40 + b * scale}" y2="${actualHeight - 40}"
+                          stroke="#333" stroke-width="4"/>
+                    <line x1="40" y1="${actualHeight - 40}" x2="40" y2="${actualHeight - 40 - a * scale}"
+                          stroke="#333" stroke-width="4"/>
+                    <line x1="40" y1="${actualHeight - 40 - a * scale}" x2="${40 + b * scale}" y2="${actualHeight - 40}"
+                          stroke="#333" stroke-width="4"/>
+
+                    <!-- Right angle marker -->
+                    <rect x="40" y="${actualHeight - 40 - 15}" width="15" height="15"
+                          fill="none" stroke="#2ecc71" stroke-width="2"/>
+
+                    <!-- Labels -->
+                    <text x="20" y="${actualHeight - 40 - a * scale / 2}" text-anchor="end"
+                          font-size="24" fill="${missing === 'a' ? '#f44336' : '#333'}" font-weight="bold">
+                        ${missing === 'a' ? '?' : 'a'}
+                    </text>
+                    <text x="${40 + b * scale / 2}" y="${actualHeight - 15}" text-anchor="middle"
+                          font-size="24" fill="${missing === 'b' ? '#f44336' : '#333'}" font-weight="bold">
+                        ${missing === 'b' ? '?' : 'b'}
+                    </text>
+                    <text x="${40 + b * scale / 2}" y="${actualHeight - 40 - a * scale / 2 - 15}" text-anchor="middle"
+                          font-size="24" fill="${missing === 'c' ? '#f44336' : '#333'}" font-weight="bold">
+                        ${missing === 'c' ? '?' : 'c'}
+                    </text>
+                </svg>
+            `;
+
+            document.getElementById('diagramContainer').innerHTML = svg;
+        }
+
+        function showHint() {
+            if (currentHintUsed) return;
+
+            currentHintUsed = true;
+            hintsUsedCount++;
+
+            const hintSection = document.getElementById('hintSection');
+            const hintText = document.getElementById('hintText');
+
+            if (currentQuestionData.type === 'basic' || currentQuestionData.type === 'word') {
+                const { a, b, c, findSide } = currentQuestionData;
+
+                if (findSide === 'a') {
+                    hintText.innerHTML = `Use the formula: a² + b² = c²<br>Rearrange to: a² = c² - b²<br>So: a = √(c² - b²)`;
+                } else if (findSide === 'b') {
+                    hintText.innerHTML = `Use the formula: a² + b² = c²<br>Rearrange to: b² = c² - a²<br>So: b = √(c² - a²)`;
+                } else {
+                    hintText.innerHTML = `Use the formula: a² + b² = c²<br>So: c = √(a² + b²)`;
+                }
+            } else {
+                hintText.innerHTML = `For a right triangle: a² + b² must equal c²<br>Check if the equation is true for the given sides.`;
+            }
+
+            hintSection.classList.add('visible');
+        }
+
+        function checkAnswer() {
+            const userInput = document.getElementById('answer').value.trim().toUpperCase();
+            attempts++;
+            currentQuestionAttempts++;
+
+            let isCorrect = false;
+
+            if (currentQuestionData.type === 'concept') {
+                isCorrect = userInput === currentAnswer;
+            } else {
+                const userAnswer = parseFloat(userInput);
+                // Allow small tolerance for rounding
+                isCorrect = Math.abs(userAnswer - currentAnswer) < 0.2;
+            }
+
+            if (isCorrect) {
+                // Calculate points for this question
+                let points = 100;
+                if (currentQuestionAttempts > 1) points -= 20; // -20 for wrong first try
+                if (currentHintUsed) points -= 5; // -5 for using hint
+                points = Math.max(0, points);
+
+                totalScore += points;
+
+                if (currentQuestionAttempts === 1) {
+                    correctFirstTry++;
+                }
+
+                document.getElementById('feedback').textContent = `Correct! +${points} points`;
+                document.getElementById('feedback').className = 'feedback correct';
+
+                setTimeout(nextQuestion, 1500);
+            } else {
+                document.getElementById('feedback').textContent = 'Try again!';
+                document.getElementById('feedback').className = 'feedback incorrect';
+                document.getElementById('answer').value = '';
+                document.getElementById('answer').focus();
+
+                // Show explanation after 2 wrong attempts
+                if (currentQuestionAttempts >= 2) {
+                    showExplanation();
+                }
+            }
+        }
+
+        function showExplanation() {
+            const explanationSection = document.getElementById('explanationSection');
+            const explanationText = document.getElementById('explanationText');
+
+            if (currentQuestionData.type === 'basic' || currentQuestionData.type === 'word') {
+                const { a, b, c, findSide } = currentQuestionData;
+
+                if (findSide === 'a') {
+                    explanationText.innerHTML =
+                        `Step 1: Start with a² + b² = c²<br>` +
+                        `Step 2: a² = c² - b² = ${c}² - ${b}² = ${c*c} - ${b*b} = ${c*c - b*b}<br>` +
+                        `Step 3: a = √${c*c - b*b} ≈ ${currentAnswer}`;
+                } else if (findSide === 'b') {
+                    explanationText.innerHTML =
+                        `Step 1: Start with a² + b² = c²<br>` +
+                        `Step 2: b² = c² - a² = ${c}² - ${a}² = ${c*c} - ${a*a} = ${c*c - a*a}<br>` +
+                        `Step 3: b = √${c*c - a*a} ≈ ${currentAnswer}`;
+                } else {
+                    explanationText.innerHTML =
+                        `Step 1: Start with a² + b² = c²<br>` +
+                        `Step 2: c² = a² + b² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${a*a + b*b}<br>` +
+                        `Step 3: c = √${a*a + b*b} ≈ ${currentAnswer}`;
+                }
+            } else {
+                if (currentQuestionData.conceptType === 'identify') {
+                    explanationText.innerHTML = `Check each option using a² + b² = c². Option A satisfies the Pythagorean theorem.`;
+                } else {
+                    const { a, b, c } = currentQuestionData;
+                    explanationText.innerHTML =
+                        `Check: ${a}² + ${b}² = ${a*a} + ${b*b} = ${a*a + b*b}<br>` +
+                        `c² = ${c}² = ${c*c}<br>` +
+                        `${a*a + b*b === c*c ? 'They are equal, so YES' : 'They are not equal, so NO'}`;
+                }
+            }
+
+            explanationSection.classList.add('visible');
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            const percentageScore = Math.round((totalScore / maxScore) * 100);
+
+            document.getElementById('scoreDisplay').textContent = `${percentageScore}%`;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('correctFirstTry').textContent = correctFirstTry;
+            document.getElementById('totalAttempts').textContent = attempts;
+            document.getElementById('hintsUsed').textContent = hintsUsedCount;
+            document.getElementById('totalTime').textContent = timeString;
+            document.getElementById('scoreValue').textContent = `${percentageScore}% (${totalScore}/${maxScore} points)`;
+
+            showScreen('results-screen');
+        }
+
+        function resetQuiz() {
+            showScreen('setup-screen');
+        }
+
+        function showScreen(screenClass) {
+            document.querySelectorAll('.setup-screen, .quiz-screen, .results-screen')
+                .forEach(screen => screen.classList.remove('active'));
+            document.querySelector('.' + screenClass).classList.add('active');
+        }
+
+        // Allow Enter key to submit answers
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('answer').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

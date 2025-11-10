@@ -276,7 +276,7 @@
         <!-- Welcome Screen -->
         <div class="screen active" id="welcomeScreen">
             <div class="intro-text">
-                <p><strong>Welcome!</strong> This quiz will help you learn to read music notes on the treble clef staff.</p>
+                <p><strong>Welcome!</strong> This quiz will help you learn to read music notes on the staff.</p>
             </div>
 
             <div class="intro-text">
@@ -287,7 +287,12 @@
                 <p>• Complete 10 questions to finish the quiz</p>
             </div>
 
-            <button onclick="startQuiz()">Start Quiz</button>
+            <div class="intro-text">
+                <p><strong>Choose your clef:</strong></p>
+            </div>
+
+            <button onclick="startQuiz('treble')" style="margin-bottom: 10px;">Treble Clef (𝄞)</button>
+            <button onclick="startQuiz('bass')">Bass Clef (𝄢)</button>
         </div>
 
         <!-- Quiz Screen -->
@@ -307,8 +312,13 @@
                     <line x1="40" y1="140" x2="360" y2="140" stroke="#1a1a1a" stroke-width="1.5"/>
 
                     <!-- Treble clef (positioned to curl around G line) -->
-                    <g id="trebleClef" transform="translate(60, 150) scale(1.8)">
+                    <g id="trebleClef" transform="translate(60, 150) scale(1.8)" style="display:none">
                         <text font-size="80" font-family="serif" fill="#1a1a1a">𝄞</text>
+                    </g>
+
+                    <!-- Bass clef (positioned with dots around F line at y=95) -->
+                    <g id="bassClef" transform="translate(50, 150) scale(1.4)" style="display:none">
+                        <text font-size="80" font-family="serif" fill="#1a1a1a">𝄢</text>
                     </g>
 
                     <!-- Note elements (will be positioned dynamically) -->
@@ -363,15 +373,15 @@
 
             <div class="message" id="resultMessage"></div>
 
-            <button onclick="restartQuiz()">Try Again</button>
+            <button onclick="restartQuiz()" style="margin-bottom: 10px;">Try Again</button>
+            <button onclick="showScreen('welcomeScreen')">Back to Menu</button>
         </div>
     </div>
 
     <script>
-        // Note positions on the staff (y-coordinate in pixels)
-        // Treble clef range from C4 (middle C) to E6
+        // Treble clef note positions (y-coordinate in pixels)
         // Staff lines are at: 140 (E), 125 (G), 110 (B), 95 (D), 80 (F)
-        const NOTE_POSITIONS = {
+        const TREBLE_NOTE_POSITIONS = {
             'C4': 155,    // Below staff (ledger line)
             'D4': 147.5,  // Below staff (space)
             'E4': 140,    // Bottom line
@@ -391,11 +401,41 @@
             'E6': 35      // 3rd ledger line above staff
         };
 
+        // Bass clef note positions (y-coordinate in pixels)
+        // Staff lines are at: 140 (G2), 125 (B2), 110 (D3), 95 (F3), 80 (A3)
+        const BASS_NOTE_POSITIONS = {
+            'A1': 185,    // 3rd ledger line below staff
+            'B1': 177.5,  // Space below 3rd ledger line
+            'C2': 170,    // 2nd ledger line below staff
+            'D2': 162.5,  // Space below 2nd ledger line
+            'E2': 155,    // 1st ledger line below staff
+            'F2': 147.5,  // Space below staff
+            'G2': 140,    // Bottom line
+            'A2': 132.5,  // Space
+            'B2': 125,    // 2nd line
+            'C3': 117.5,  // Space
+            'D3': 110,    // Middle line
+            'E3': 102.5,  // Space
+            'F3': 95,     // 4th line
+            'G3': 87.5,   // Space
+            'A3': 80,     // Top line
+            'B3': 72.5,   // Space above staff
+            'C4': 65,     // 1st ledger line above staff
+            'D4': 57.5,   // Space above 1st ledger line
+            'E4': 50      // 2nd ledger line above staff
+        };
+
         // Extract just the letter name from note
-        const NOTE_LETTERS = {
+        const TREBLE_NOTE_LETTERS = {
             'C4': 'C', 'D4': 'D', 'E4': 'E', 'F4': 'F', 'G4': 'G', 'A4': 'A', 'B4': 'B',
             'C5': 'C', 'D5': 'D', 'E5': 'E', 'F5': 'F', 'G5': 'G', 'A5': 'A', 'B5': 'B',
             'C6': 'C', 'D6': 'D', 'E6': 'E'
+        };
+
+        const BASS_NOTE_LETTERS = {
+            'A1': 'A', 'B1': 'B', 'C2': 'C', 'D2': 'D', 'E2': 'E', 'F2': 'F', 'G2': 'G',
+            'A2': 'A', 'B2': 'B', 'C3': 'C', 'D3': 'D', 'E3': 'E', 'F3': 'F', 'G3': 'G',
+            'A3': 'A', 'B3': 'B', 'C4': 'C', 'D4': 'D', 'E4': 'E'
         };
 
         let currentQuestion = 0;
@@ -403,11 +443,29 @@
         let totalQuestions = 10;
         let currentNote = null;
         let answered = false;
+        let selectedClef = 'treble';
+        let NOTE_POSITIONS = TREBLE_NOTE_POSITIONS;
+        let NOTE_LETTERS = TREBLE_NOTE_LETTERS;
 
-        function startQuiz() {
+        function startQuiz(clef) {
+            selectedClef = clef;
             currentQuestion = 0;
             score = 0;
             answered = false;
+
+            // Set note positions and letters based on selected clef
+            if (clef === 'bass') {
+                NOTE_POSITIONS = BASS_NOTE_POSITIONS;
+                NOTE_LETTERS = BASS_NOTE_LETTERS;
+            } else {
+                NOTE_POSITIONS = TREBLE_NOTE_POSITIONS;
+                NOTE_LETTERS = TREBLE_NOTE_LETTERS;
+            }
+
+            // Show/hide appropriate clef symbol
+            document.getElementById('trebleClef').style.display = clef === 'treble' ? 'block' : 'none';
+            document.getElementById('bassClef').style.display = clef === 'bass' ? 'block' : 'none';
+
             showScreen('quizScreen');
             displayQuestion();
         }
@@ -488,22 +546,49 @@
                 lineElement.style.display = 'block';
             }
 
-            // Middle C (C4) - below staff
-            if (note === 'C4') {
-                drawLedgerLine(ledgerLine1, 155);
+            // Treble clef ledger lines
+            if (selectedClef === 'treble') {
+                // Middle C (C4) - below staff
+                if (note === 'C4') {
+                    drawLedgerLine(ledgerLine1, 155);
+                }
+                // Notes above staff - draw all necessary ledger lines
+                else if (note === 'A5' || note === 'B5') {
+                    drawLedgerLine(ledgerLine1, 65); // 1st ledger line
+                }
+                else if (note === 'C6' || note === 'D6') {
+                    drawLedgerLine(ledgerLine1, 65); // 1st ledger line
+                    drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
+                }
+                else if (note === 'E6') {
+                    drawLedgerLine(ledgerLine1, 65); // 1st ledger line
+                    drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
+                    drawLedgerLine(ledgerLine3, 35); // 3rd ledger line
+                }
             }
-            // Notes above staff - draw all necessary ledger lines
-            else if (note === 'A5' || note === 'B5') {
-                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
-            }
-            else if (note === 'C6' || note === 'D6') {
-                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
-                drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
-            }
-            else if (note === 'E6') {
-                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
-                drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
-                drawLedgerLine(ledgerLine3, 35); // 3rd ledger line
+            // Bass clef ledger lines
+            else if (selectedClef === 'bass') {
+                // Notes below staff - draw all necessary ledger lines
+                if (note === 'E2' || note === 'D2') {
+                    drawLedgerLine(ledgerLine1, 155); // 1st ledger line below
+                }
+                else if (note === 'C2' || note === 'B1') {
+                    drawLedgerLine(ledgerLine1, 155); // 1st ledger line below
+                    drawLedgerLine(ledgerLine2, 170); // 2nd ledger line below
+                }
+                else if (note === 'A1') {
+                    drawLedgerLine(ledgerLine1, 155); // 1st ledger line below
+                    drawLedgerLine(ledgerLine2, 170); // 2nd ledger line below
+                    drawLedgerLine(ledgerLine3, 185); // 3rd ledger line below
+                }
+                // Notes above staff - draw all necessary ledger lines
+                else if (note === 'C4' || note === 'D4') {
+                    drawLedgerLine(ledgerLine1, 65); // 1st ledger line above
+                }
+                else if (note === 'E4') {
+                    drawLedgerLine(ledgerLine1, 65); // 1st ledger line above
+                    drawLedgerLine(ledgerLine2, 50); // 2nd ledger line above
+                }
             }
         }
 
@@ -563,7 +648,7 @@
                 message = 'Perfect score! You have excellent note reading skills!';
             } else if (percentage >= 80) {
                 emoji = '🌟';
-                message = 'Great work! You\'re well on your way to mastering note recognition.';
+                message = 'Great work! You\'re well on your way to mastering ' + (selectedClef === 'bass' ? 'bass' : 'treble') + ' clef note recognition.';
             } else if (percentage >= 60) {
                 emoji = '👍';
                 message = 'Good job! Keep practicing and you\'ll improve even more.';
@@ -577,7 +662,7 @@
         }
 
         function restartQuiz() {
-            startQuiz();
+            startQuiz(selectedClef);
         }
     </script>
 </body>

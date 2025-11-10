@@ -304,6 +304,8 @@
                         <!-- Ledger lines for notes outside staff -->
                         <line id="ledgerLine1" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
                         <line id="ledgerLine2" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
+                        <line id="ledgerLine3" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
+                        <line id="ledgerLine4" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
 
                         <!-- Note head -->
                         <ellipse id="noteHead" cx="200" cy="110" rx="10" ry="8" fill="#1a1a1a"/>
@@ -355,7 +357,7 @@
 
     <script>
         // Note positions on the staff (y-coordinate in pixels)
-        // Treble clef range from C4 (middle C) to A5
+        // Treble clef range from C4 (middle C) to E6
         // Staff lines are at: 140 (E), 125 (G), 110 (B), 95 (D), 80 (F)
         const NOTE_POSITIONS = {
             'C4': 155,    // Below staff (ledger line)
@@ -370,13 +372,18 @@
             'E5': 87.5,   // Space
             'F5': 80,     // Top line
             'G5': 72.5,   // Space above staff
-            'A5': 65      // Ledger line above staff
+            'A5': 65,     // 1st ledger line above staff
+            'B5': 57.5,   // Space above 1st ledger line
+            'C6': 50,     // 2nd ledger line above staff
+            'D6': 42.5,   // Space above 2nd ledger line
+            'E6': 35      // 3rd ledger line above staff
         };
 
         // Extract just the letter name from note
         const NOTE_LETTERS = {
             'C4': 'C', 'D4': 'D', 'E4': 'E', 'F4': 'F', 'G4': 'G', 'A4': 'A', 'B4': 'B',
-            'C5': 'C', 'D5': 'D', 'E5': 'E', 'F5': 'F', 'G5': 'G', 'A5': 'A'
+            'C5': 'C', 'D5': 'D', 'E5': 'E', 'F5': 'F', 'G5': 'G', 'A5': 'A', 'B5': 'B',
+            'C6': 'C', 'D6': 'D', 'E6': 'E'
         };
 
         let currentQuestion = 0;
@@ -451,34 +458,40 @@
             // Handle ledger lines for notes outside staff
             const ledgerLine1 = document.getElementById('ledgerLine1');
             const ledgerLine2 = document.getElementById('ledgerLine2');
+            const ledgerLine3 = document.getElementById('ledgerLine3');
+            const ledgerLine4 = document.getElementById('ledgerLine4');
 
-            // Reset ledger lines
+            // Reset all ledger lines
             ledgerLine1.style.display = 'none';
             ledgerLine2.style.display = 'none';
+            ledgerLine3.style.display = 'none';
+            ledgerLine4.style.display = 'none';
+
+            // Helper function to draw a ledger line
+            function drawLedgerLine(lineElement, yPosition) {
+                lineElement.setAttribute('x1', xPos - 15);
+                lineElement.setAttribute('y1', yPosition);
+                lineElement.setAttribute('x2', xPos + 15);
+                lineElement.setAttribute('y2', yPosition);
+                lineElement.style.display = 'block';
+            }
 
             // Middle C (C4) - below staff
             if (note === 'C4') {
-                ledgerLine1.setAttribute('x1', xPos - 15);
-                ledgerLine1.setAttribute('y1', 155);
-                ledgerLine1.setAttribute('x2', xPos + 15);
-                ledgerLine1.setAttribute('y2', 155);
-                ledgerLine1.style.display = 'block';
+                drawLedgerLine(ledgerLine1, 155);
             }
-            // D4 - between ledger line and staff
-            else if (note === 'D4') {
-                // No ledger line needed
+            // Notes above staff - draw all necessary ledger lines
+            else if (note === 'A5' || note === 'B5') {
+                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
             }
-            // High A (A5) - above staff
-            else if (note === 'A5') {
-                ledgerLine1.setAttribute('x1', xPos - 15);
-                ledgerLine1.setAttribute('y1', 65);
-                ledgerLine1.setAttribute('x2', xPos + 15);
-                ledgerLine1.setAttribute('y2', 65);
-                ledgerLine1.style.display = 'block';
+            else if (note === 'C6' || note === 'D6') {
+                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
+                drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
             }
-            // G5 - between ledger line and staff
-            else if (note === 'G5') {
-                // No ledger line needed
+            else if (note === 'E6') {
+                drawLedgerLine(ledgerLine1, 65); // 1st ledger line
+                drawLedgerLine(ledgerLine2, 50); // 2nd ledger line
+                drawLedgerLine(ledgerLine3, 35); // 3rd ledger line
             }
         }
 

@@ -297,7 +297,7 @@
 
         <!-- Quiz Screen -->
         <div class="quiz-screen">
-            <div class="question-progress" id="progress">Question 1 of 10</div>
+            <div class="question-progress" id="progress">Question 1 of 6</div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar" style="width: 0%"></div>
             </div>
@@ -321,7 +321,7 @@
                     <div class="stat-label">Correct</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">10</div>
+                    <div class="stat-number">6</div>
                     <div class="stat-label">Total</div>
                 </div>
                 <div class="stat-card">
@@ -337,94 +337,119 @@
     </div>
 
     <script>
-        const questions = [
-            {
-                question: "How many integers are there from 5 to 12?",
-                hint: "The integers are: 5, 6, 7, 8, 9, 10, 11, 12",
-                a: 5,
-                b: 12,
-                answer: 8,
-                explanation: "Using the formula: 12 - 5 + 1 = 8"
-            },
-            {
-                question: "How many integers are between 6.4 and 46.7?",
-                hint: "First integer ≥ 6.4 is 7, last integer ≤ 46.7 is 46",
-                a: 7,
-                b: 46,
-                answer: 40,
-                explanation: "The integers range from 7 to 46 (inclusive). Using the formula: 46 - 7 + 1 = 40"
-            },
-            {
-                question: "How many integers are there from -5 to 3?",
-                hint: "Don't forget to include negative numbers, zero, and positive numbers!",
-                a: -5,
-                b: 3,
-                answer: 9,
-                explanation: "The integers are: -5, -4, -3, -2, -1, 0, 1, 2, 3. Using the formula: 3 - (-5) + 1 = 3 + 5 + 1 = 9"
-            },
-            {
-                question: "How many integers are there from -10 to -2?",
-                hint: "The integers are: -10, -9, -8, -7, -6, -5, -4, -3, -2",
-                a: -10,
-                b: -2,
-                answer: 9,
-                explanation: "Using the formula: -2 - (-10) + 1 = -2 + 10 + 1 = 9"
-            },
-            {
-                question: "How many integers are between -3.9 and 5.1?",
-                hint: "First integer ≥ -3.9 is -3, last integer ≤ 5.1 is 5",
-                a: -3,
-                b: 5,
-                answer: 9,
-                explanation: "The integers range from -3 to 5 (inclusive). Using the formula: 5 - (-3) + 1 = 5 + 3 + 1 = 9"
-            },
-            {
-                question: "How many integers are there from 1 to 100?",
-                hint: "This is all the integers from 1 through 100",
-                a: 1,
-                b: 100,
-                answer: 100,
-                explanation: "Using the formula: 100 - 1 + 1 = 100"
-            },
-            {
-                question: "How many integers are there from -20 to 20?",
-                hint: "Remember to include 0 in your count!",
-                a: -20,
-                b: 20,
-                answer: 41,
-                explanation: "Using the formula: 20 - (-20) + 1 = 20 + 20 + 1 = 41"
-            },
-            {
-                question: "How many integers are between 15.5 and 15.9?",
-                hint: "Are there ANY integers in this range?",
-                a: null,
-                b: null,
-                answer: 0,
-                explanation: "There are NO integers between 15.5 and 15.9. The next integer after 15.5 would be 16, which is greater than 15.9."
-            },
-            {
-                question: "How many integers are there from -1 to 1?",
-                hint: "The integers are: -1, 0, 1",
-                a: -1,
-                b: 1,
-                answer: 3,
-                explanation: "The integers are: -1, 0, 1. Using the formula: 1 - (-1) + 1 = 1 + 1 + 1 = 3"
-            },
-            {
-                question: "How many integers are between -8.2 and -0.5?",
-                hint: "First integer ≥ -8.2 is -8, last integer ≤ -0.5 is -1",
-                a: -8,
-                b: -1,
-                answer: 8,
-                explanation: "The integers range from -8 to -1 (inclusive): -8, -7, -6, -5, -4, -3, -2, -1. Using the formula: -1 - (-8) + 1 = -1 + 8 + 1 = 8"
-            }
-        ];
-
+        let questions = [];
         let currentQuestion = 0;
         let score = 0;
         let answered = false;
 
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randomDecimal(min, max) {
+            return (Math.random() * (max - min) + min).toFixed(1);
+        }
+
+        function generateQuestions() {
+            const questionTypes = [
+                // Type 1: integral pos-pos
+                () => {
+                    const a = randomInt(1, 50);
+                    const b = randomInt(a + 5, a + 30);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are there from ${a} to ${b}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `Using the formula: ${b} - ${a} + 1 = ${answer}`
+                    };
+                },
+                // Type 2: integral neg-pos
+                () => {
+                    const a = randomInt(-20, -1);
+                    const b = randomInt(1, 20);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are there from ${a} to ${b}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `Using the formula: ${b} - (${a}) + 1 = ${b} + ${-a} + 1 = ${answer}`
+                    };
+                },
+                // Type 3: integral neg-neg
+                () => {
+                    const a = randomInt(-30, -10);
+                    const b = randomInt(a + 5, -2);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are there from ${a} to ${b}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `Using the formula: ${b} - (${a}) + 1 = ${b} + ${-a} + 1 = ${answer}`
+                    };
+                },
+                // Type 4: fractional pos-pos
+                () => {
+                    const startInt = randomInt(1, 40);
+                    const endInt = randomInt(startInt + 10, startInt + 50);
+                    const startDec = parseFloat(randomDecimal(startInt + 0.1, startInt + 0.9));
+                    const endDec = parseFloat(randomDecimal(endInt + 0.1, endInt + 0.9));
+                    const a = Math.ceil(startDec);
+                    const b = Math.floor(endDec);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are between ${startDec} and ${endDec}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `The integers range from ${a} to ${b} (inclusive). Using the formula: ${b} - ${a} + 1 = ${answer}`
+                    };
+                },
+                // Type 5: fractional neg-pos
+                () => {
+                    const startInt = randomInt(-15, -2);
+                    const endInt = randomInt(2, 15);
+                    const startDec = parseFloat(randomDecimal(startInt + 0.1, startInt + 0.9));
+                    const endDec = parseFloat(randomDecimal(endInt + 0.1, endInt + 0.9));
+                    const a = Math.ceil(startDec);
+                    const b = Math.floor(endDec);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are between ${startDec} and ${endDec}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `The integers range from ${a} to ${b} (inclusive). Using the formula: ${b} - (${a}) + 1 = ${b} + ${-a} + 1 = ${answer}`
+                    };
+                },
+                // Type 6: fractional neg-neg
+                () => {
+                    const startInt = randomInt(-20, -10);
+                    const endInt = randomInt(startInt + 5, -2);
+                    const startDec = parseFloat(randomDecimal(startInt + 0.1, startInt + 0.9));
+                    const endDec = parseFloat(randomDecimal(endInt + 0.1, endInt + 0.9));
+                    const a = Math.ceil(startDec);
+                    const b = Math.floor(endDec);
+                    const answer = b - a + 1;
+                    return {
+                        question: `How many integers are between ${startDec} and ${endDec}?`,
+                        a: a,
+                        b: b,
+                        answer: answer,
+                        explanation: `The integers range from ${a} to ${b} (inclusive). Using the formula: ${b} - (${a}) + 1 = ${b} + ${-a} + 1 = ${answer}`
+                    };
+                }
+            ];
+
+            // Generate one question of each type
+            questions = questionTypes.map(fn => fn());
+        }
+
         function startQuiz() {
+            generateQuestions();
             currentQuestion = 0;
             score = 0;
             answered = false;

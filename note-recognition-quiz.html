@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Recognition Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .intro-text {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .question-progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            font-weight: 400;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 4px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #1a1a1a;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .staff-container {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #staff {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .note-buttons {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .note-btn {
+            padding: 15px 10px;
+            background: white;
+            color: #1a1a1a;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .note-btn:hover:not(:disabled) {
+            border-color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .note-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .note-btn.correct {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+        }
+
+        .note-btn.incorrect {
+            background: #f8f9fa;
+            border-color: #999;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            height: 160px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 400;
+        }
+
+        .feedback:not(:empty) {
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            color: #1a1a1a;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 400;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .emoji {
+            font-size: 2.5em;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        h2 {
+            color: #1a1a1a;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 30px 15px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .staff-container {
+                padding: 20px 10px;
+            }
+
+            .note-buttons {
+                gap: 8px;
+            }
+
+            .note-btn {
+                padding: 12px 8px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Note Recognition Quiz</h1>
+
+        <!-- Welcome Screen -->
+        <div class="screen active" id="welcomeScreen">
+            <div class="intro-text">
+                <p><strong>Welcome!</strong> This quiz will help you learn to read music notes on the treble clef staff.</p>
+            </div>
+
+            <div class="intro-text">
+                <p><strong>How it works:</strong></p>
+                <p>• A musical note will appear on the staff</p>
+                <p>• Identify the note by clicking its letter name (C, D, E, F, G, A, or B)</p>
+                <p>• You'll receive immediate feedback on your answer</p>
+                <p>• Complete 10 questions to finish the quiz</p>
+            </div>
+
+            <button onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div class="screen" id="quizScreen">
+            <div class="question-progress" id="progress">Question 1 of 10</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div class="staff-container">
+                <svg id="staff" width="400" height="170" viewBox="0 0 400 200">
+                    <!-- Staff lines -->
+                    <line x1="40" y1="80" x2="360" y2="80" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="40" y1="95" x2="360" y2="95" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="40" y1="110" x2="360" y2="110" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="40" y1="125" x2="360" y2="125" stroke="#1a1a1a" stroke-width="1.5"/>
+                    <line x1="40" y1="140" x2="360" y2="140" stroke="#1a1a1a" stroke-width="1.5"/>
+
+                    <!-- Treble clef (positioned to curl around G line) -->
+                    <g id="trebleClef" transform="translate(60, 150) scale(1.8)">
+                        <text font-size="80" font-family="serif" fill="#1a1a1a">𝄞</text>
+                    </g>
+
+                    <!-- Note elements (will be positioned dynamically) -->
+                    <g id="noteGroup">
+                        <!-- Ledger lines for notes outside staff -->
+                        <line id="ledgerLine1" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
+                        <line id="ledgerLine2" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="1.5" style="display:none"/>
+
+                        <!-- Note head -->
+                        <ellipse id="noteHead" cx="200" cy="110" rx="10" ry="8" fill="#1a1a1a"/>
+
+                        <!-- Stem -->
+                        <line id="noteStem" x1="210" y1="110" x2="210" y2="70" stroke="#1a1a1a" stroke-width="2.5"/>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="note-buttons">
+                <button class="note-btn" onclick="checkAnswer('C')">C</button>
+                <button class="note-btn" onclick="checkAnswer('D')">D</button>
+                <button class="note-btn" onclick="checkAnswer('E')">E</button>
+                <button class="note-btn" onclick="checkAnswer('F')">F</button>
+                <button class="note-btn" onclick="checkAnswer('G')">G</button>
+                <button class="note-btn" onclick="checkAnswer('A')">A</button>
+                <button class="note-btn" onclick="checkAnswer('B')">B</button>
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="emoji" id="resultEmoji">🎉</div>
+            <h2 style="text-align: center; margin-bottom: 20px;">Quiz Complete!</h2>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="scoreNumber">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="percentNumber">0%</div>
+                    <div class="stat-label">Score</div>
+                </div>
+            </div>
+
+            <div class="message" id="resultMessage"></div>
+
+            <button onclick="restartQuiz()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Note positions on the staff (y-coordinate in pixels)
+        // Treble clef range from C4 (middle C) to A5
+        // Staff lines are at: 140 (E), 125 (G), 110 (B), 95 (D), 80 (F)
+        const NOTE_POSITIONS = {
+            'C4': 155,    // Below staff (ledger line)
+            'D4': 147.5,  // Below staff (space)
+            'E4': 140,    // Bottom line
+            'F4': 132.5,  // Space
+            'G4': 125,    // Line
+            'A4': 117.5,  // Space
+            'B4': 110,    // Middle line
+            'C5': 102.5,  // Space
+            'D5': 95,     // Line
+            'E5': 87.5,   // Space
+            'F5': 80,     // Top line
+            'G5': 72.5,   // Space above staff
+            'A5': 65      // Ledger line above staff
+        };
+
+        // Extract just the letter name from note
+        const NOTE_LETTERS = {
+            'C4': 'C', 'D4': 'D', 'E4': 'E', 'F4': 'F', 'G4': 'G', 'A4': 'A', 'B4': 'B',
+            'C5': 'C', 'D5': 'D', 'E5': 'E', 'F5': 'F', 'G5': 'G', 'A5': 'A'
+        };
+
+        let currentQuestion = 0;
+        let score = 0;
+        let totalQuestions = 10;
+        let currentNote = null;
+        let answered = false;
+
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            showScreen('quizScreen');
+            displayQuestion();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function getRandomNote() {
+            const notes = Object.keys(NOTE_POSITIONS);
+            return notes[Math.floor(Math.random() * notes.length)];
+        }
+
+        function displayQuestion() {
+            answered = false;
+            currentNote = getRandomNote();
+
+            document.getElementById('progress').textContent = `Question ${currentQuestion + 1} of ${totalQuestions}`;
+            document.getElementById('progressBar').style.width = ((currentQuestion / totalQuestions) * 100) + '%';
+            document.getElementById('feedback').innerHTML = '';
+
+            // Reset button states
+            document.querySelectorAll('.note-btn').forEach(btn => {
+                btn.classList.remove('correct', 'incorrect');
+                btn.disabled = false;
+            });
+
+            drawNote(currentNote);
+        }
+
+        function drawNote(note) {
+            const yPos = NOTE_POSITIONS[note];
+            const xPos = 200;
+
+            // Update note head position
+            const noteHead = document.getElementById('noteHead');
+            noteHead.setAttribute('cy', yPos);
+            noteHead.setAttribute('cx', xPos);
+
+            // Update stem position and direction
+            const noteStem = document.getElementById('noteStem');
+            const stemHeight = 40;
+
+            // Stem goes up for notes on or below middle line, down for notes above
+            if (yPos >= 110) {
+                // Stem up (right side of note head)
+                noteStem.setAttribute('x1', xPos + 10);
+                noteStem.setAttribute('y1', yPos);
+                noteStem.setAttribute('x2', xPos + 10);
+                noteStem.setAttribute('y2', yPos - stemHeight);
+            } else {
+                // Stem down (left side of note head)
+                noteStem.setAttribute('x1', xPos - 10);
+                noteStem.setAttribute('y1', yPos);
+                noteStem.setAttribute('x2', xPos - 10);
+                noteStem.setAttribute('y2', yPos + stemHeight);
+            }
+
+            // Handle ledger lines for notes outside staff
+            const ledgerLine1 = document.getElementById('ledgerLine1');
+            const ledgerLine2 = document.getElementById('ledgerLine2');
+
+            // Reset ledger lines
+            ledgerLine1.style.display = 'none';
+            ledgerLine2.style.display = 'none';
+
+            // Middle C (C4) - below staff
+            if (note === 'C4') {
+                ledgerLine1.setAttribute('x1', xPos - 15);
+                ledgerLine1.setAttribute('y1', 155);
+                ledgerLine1.setAttribute('x2', xPos + 15);
+                ledgerLine1.setAttribute('y2', 155);
+                ledgerLine1.style.display = 'block';
+            }
+            // D4 - between ledger line and staff
+            else if (note === 'D4') {
+                // No ledger line needed
+            }
+            // High A (A5) - above staff
+            else if (note === 'A5') {
+                ledgerLine1.setAttribute('x1', xPos - 15);
+                ledgerLine1.setAttribute('y1', 65);
+                ledgerLine1.setAttribute('x2', xPos + 15);
+                ledgerLine1.setAttribute('y2', 65);
+                ledgerLine1.style.display = 'block';
+            }
+            // G5 - between ledger line and staff
+            else if (note === 'G5') {
+                // No ledger line needed
+            }
+        }
+
+        function checkAnswer(userAnswer) {
+            if (answered) return;
+
+            answered = true;
+            const correctAnswer = NOTE_LETTERS[currentNote];
+            const isCorrect = userAnswer === correctAnswer;
+
+            if (isCorrect) score++;
+
+            // Disable all buttons and highlight
+            document.querySelectorAll('.note-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === userAnswer && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            // Show feedback
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback';
+            feedbackDiv.innerHTML = `
+                <div>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</div>
+                <div style="margin-top: 10px; color: #666;">
+                    The note is <strong>${correctAnswer}</strong> (${currentNote})
+                </div>
+                <button class="next-btn" onclick="nextQuestion()">${currentQuestion === totalQuestions - 1 ? 'See Results' : 'Next Question'}</button>
+            `;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= totalQuestions) {
+                showResults();
+            } else {
+                displayQuestion();
+            }
+        }
+
+        function showResults() {
+            showScreen('resultsScreen');
+
+            const percentage = Math.round((score / totalQuestions) * 100);
+
+            document.getElementById('scoreNumber').textContent = score;
+            document.getElementById('percentNumber').textContent = percentage + '%';
+
+            let emoji = '🎉';
+            let message = '';
+
+            if (percentage === 100) {
+                emoji = '🏆';
+                message = 'Perfect score! You have excellent note reading skills!';
+            } else if (percentage >= 80) {
+                emoji = '🌟';
+                message = 'Great work! You\'re well on your way to mastering note recognition.';
+            } else if (percentage >= 60) {
+                emoji = '👍';
+                message = 'Good job! Keep practicing and you\'ll improve even more.';
+            } else {
+                emoji = '📚';
+                message = 'Keep studying! Practice makes perfect in music reading.';
+            }
+
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>

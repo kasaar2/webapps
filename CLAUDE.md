@@ -9,24 +9,35 @@ This is a collection of standalone educational quiz web applications designed fo
 ## Architecture
 
 ### File Structure
-- **index.html** - Main landing page with animated cards linking to all quiz applications
+- **index.html** - Main landing page with minimal, elegant design linking to all quiz applications
+- **STYLE_GUIDE.md** - Design system specification for consistent styling across pages
 - **multiplication-quiz.html** - Times tables practice (grades 3-5)
 - **pythagorean-quiz.html** - Pythagorean theorem problems (grades 5-6)
+- **counting-integers-quiz.html** - Integer counting formula practice (grades 5-6)
 - **flag-quiz.html** - World geography flag identification game
 - **national_flags.csv** - Source data for flag quiz (embedded in flag-quiz.html as JSON)
+
+### Design System
+
+The project uses a **minimal and elegant** design system documented in `STYLE_GUIDE.md`. Key principles:
+- Clean, uncluttered interfaces
+- System fonts with light weights (300-400)
+- Subtle hover effects (no dramatic animations)
+- Light gray backgrounds (#fafafa) with white cards
+- Consistent spacing and typography scale
+
+**Reference `STYLE_GUIDE.md` when creating new pages or updating existing ones.**
 
 ### Common Patterns
 
 All quiz applications follow a similar architecture:
 
 1. **Screen-based navigation**: Each app uses `.screen` divs with `.active` class to show/hide different states (welcome, game, results)
-2. **Embedded styles**: All CSS is inline in `<style>` tags, typically featuring:
-   - Gradient backgrounds
-   - Card-based layouts with animations
-   - Mobile-responsive design with media queries
+2. **Embedded styles**: All CSS is inline in `<style>` tags
 3. **Vanilla JavaScript**: No frameworks - pure DOM manipulation
 4. **Game state management**: Single `gameState` object tracks progress, score, and settings
 5. **Self-contained data**: All necessary data (like flag URLs) is embedded directly in the HTML
+6. **Mobile-responsive design**: Media queries for tablet/mobile breakpoints
 
 ### Quiz-Specific Features
 
@@ -61,16 +72,16 @@ Simply open any HTML file directly in a web browser - no server required. All ap
 Follow the established pattern:
 1. Create self-contained HTML file with embedded CSS/JS
 2. Use screen-based navigation (welcome → game → results)
-3. Implement mobile-responsive design
-4. Add colorful gradients and animations for kid-friendly appeal
+3. **Follow STYLE_GUIDE.md** for consistent styling (minimal and elegant design)
+4. Implement mobile-responsive design with media queries
 5. Update index.html to add a card linking to the new quiz
 
 ### Code Style
-- Kid-friendly design: bright colors, large fonts, animations
-- Accessibility: ensure large click targets, clear feedback
-- Keep everything in one file for portability
-- Use semantic HTML
-- Graceful degradation (works without JavaScript for static content)
+- **Design**: Follow `STYLE_GUIDE.md` for minimal, elegant aesthetics
+- **Accessibility**: Ensure large click targets, clear feedback, good color contrast
+- **Portability**: Keep everything in one file (HTML/CSS/JS)
+- **Semantic HTML**: Use proper heading hierarchy, meaningful elements
+- **Progressive enhancement**: Core functionality works without JavaScript where possible
 
 ## Data Management
 

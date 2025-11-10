@@ -12,259 +12,132 @@
         }
 
         body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #fafafa;
             min-height: 100vh;
-            padding: 20px;
-            animation: gradientShift 10s ease infinite;
-            background-size: 200% 200%;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            padding: 40px 20px;
+            color: #333;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 60px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         h1 {
-            font-size: 4em;
-            color: white;
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
-            animation: bounce 2s ease infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            font-size: 2.5em;
+            color: #1a1a1a;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
         }
 
         .subtitle {
-            font-size: 1.5em;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 400;
         }
 
         .section {
-            margin-bottom: 60px;
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            margin-bottom: 50px;
         }
 
         .section-header {
-            background: white;
-            padding: 20px;
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .section-icon {
-            font-size: 3em;
-            animation: spin 3s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(15deg); }
+            margin-bottom: 25px;
         }
 
         .section-title {
-            font-size: 2.5em;
-            color: #667eea;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 1.5em;
+            color: #1a1a1a;
+            font-weight: 400;
+            letter-spacing: -0.3px;
         }
 
         .quiz-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            background: white;
-            padding: 30px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .quiz-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
             text-decoration: none;
             color: inherit;
             display: block;
-            border: 3px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quiz-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .quiz-card:hover::before {
-            opacity: 1;
+            transition: all 0.2s ease;
         }
 
         .quiz-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            border-color: #667eea;
-        }
-
-        .math-card {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-        }
-
-        .geography-card {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            border-color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
         }
 
         .quiz-emoji {
-            font-size: 4em;
+            font-size: 2.5em;
             margin-bottom: 15px;
             display: block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .quiz-card:nth-child(2) .quiz-emoji {
-            animation-delay: 0.5s;
-        }
-
-        .quiz-card:nth-child(3) .quiz-emoji {
-            animation-delay: 1s;
         }
 
         .quiz-title {
-            font-size: 1.8em;
-            color: #2d3436;
+            font-size: 1.3em;
+            color: #1a1a1a;
             margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 500;
         }
 
         .quiz-description {
-            color: #636e72;
-            font-size: 1.1em;
-            line-height: 1.5;
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
             margin-bottom: 15px;
         }
 
         .quiz-level {
             display: inline-block;
-            background: rgba(255,255,255,0.8);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .star {
-            color: #ffd700;
-            font-size: 1.2em;
+            color: #888;
+            font-size: 0.85em;
+            font-weight: 400;
         }
 
         footer {
             text-align: center;
-            margin-top: 50px;
-            color: white;
-            font-size: 1.1em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .sparkle {
-            display: inline-block;
-            animation: sparkle 1.5s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.95em;
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 30px 15px;
+            }
+
             h1 {
-                font-size: 2.5em;
+                font-size: 2em;
             }
 
             .subtitle {
-                font-size: 1.2em;
+                font-size: 1em;
             }
 
             .section-title {
-                font-size: 1.8em;
-            }
-
-            .section-icon {
-                font-size: 2em;
+                font-size: 1.3em;
             }
 
             .quiz-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .quiz-title {
-                font-size: 1.5em;
-            }
-        }
-
-        /* Confetti effect */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #f0f;
-            position: absolute;
-            animation: confetti-fall 3s linear infinite;
-        }
-
-        @keyframes confetti-fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
             }
         }
     </style>
@@ -272,53 +145,35 @@
 <body>
     <div class="container">
         <header>
-            <h1>
-                <span class="sparkle">✨</span>
-                Elementary Quizzes
-                <span class="sparkle">✨</span>
-            </h1>
-            <p class="subtitle">Fun Learning Games for Kids!</p>
+            <h1>Elementary Quizzes</h1>
+            <p class="subtitle">Interactive learning exercises</p>
         </header>
 
         <!-- Mathematics Section -->
         <div class="section">
             <div class="section-header">
-                <span class="section-icon">🔢</span>
                 <h2 class="section-title">Mathematics</h2>
             </div>
             <div class="quiz-grid">
-                <a href="multiplication-quiz.html" class="quiz-card math-card">
+                <a href="multiplication-quiz.html" class="quiz-card">
                     <span class="quiz-emoji">✖️</span>
                     <h3 class="quiz-title">Multiplication Quiz</h3>
                     <p class="quiz-description">Practice your times tables! Master multiplication from 1×1 to 12×12 with fun, timed challenges.</p>
-                    <span class="quiz-level">
-                        <span class="star">⭐</span>
-                        <span class="star">⭐</span>
-                        Grades 3-5
-                    </span>
+                    <span class="quiz-level">Grades 3-5</span>
                 </a>
 
-                <a href="pythagorean-quiz.html" class="quiz-card math-card">
+                <a href="pythagorean-quiz.html" class="quiz-card">
                     <span class="quiz-emoji">📐</span>
                     <h3 class="quiz-title">Pythagorean Theorem</h3>
                     <p class="quiz-description">Discover the magic of right triangles! Learn a² + b² = c² through interactive problems and visual hints.</p>
-                    <span class="quiz-level">
-                        <span class="star">⭐</span>
-                        <span class="star">⭐</span>
-                        <span class="star">⭐</span>
-                        Grades 5-6
-                    </span>
+                    <span class="quiz-level">Grades 5-6</span>
                 </a>
 
-                <a href="counting-integers-quiz.html" class="quiz-card math-card">
+                <a href="counting-integers-quiz.html" class="quiz-card">
                     <span class="quiz-emoji">🔢</span>
                     <h3 class="quiz-title">Counting Integers</h3>
                     <p class="quiz-description">Master the formula for counting integers! Learn how to find how many integers are between any two numbers.</p>
-                    <span class="quiz-level">
-                        <span class="star">⭐</span>
-                        <span class="star">⭐</span>
-                        Grades 5-6
-                    </span>
+                    <span class="quiz-level">Grades 5-6</span>
                 </a>
             </div>
         </div>
@@ -326,59 +181,21 @@
         <!-- Geography Section -->
         <div class="section">
             <div class="section-header">
-                <span class="section-icon">🌍</span>
                 <h2 class="section-title">Geography</h2>
             </div>
             <div class="quiz-grid">
-                <a href="flag-quiz.html" class="quiz-card geography-card">
+                <a href="flag-quiz.html" class="quiz-card">
                     <span class="quiz-emoji">🏴</span>
                     <h3 class="quiz-title">World Flags Quiz</h3>
                     <p class="quiz-description">Learn flags from around the world! Multiple game modes, difficulty levels, and 201 countries to explore.</p>
-                    <span class="quiz-level">
-                        <span class="star">⭐</span>
-                        <span class="star">⭐</span>
-                        All Ages
-                    </span>
+                    <span class="quiz-level">All Ages</span>
                 </a>
             </div>
         </div>
 
         <footer>
-            <p>🎓 Have fun learning! Click any quiz to get started 🎓</p>
+            <p>Click any quiz to get started</p>
         </footer>
     </div>
-
-    <script>
-        // Add some random confetti on page load
-        function createConfetti() {
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.animationDelay = Math.random() * 3 + 's';
-                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    document.body.appendChild(confetti);
-
-                    setTimeout(() => confetti.remove(), 5000);
-                }, i * 100);
-            }
-        }
-
-        // Trigger confetti on load
-        window.addEventListener('load', createConfetti);
-
-        // Add click sound effect (visual feedback)
-        document.querySelectorAll('.quiz-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 100);
-            });
-        });
-    </script>
 </body>
 </html>

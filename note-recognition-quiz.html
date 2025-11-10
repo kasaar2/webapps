@@ -176,6 +176,18 @@
             color: #1a1a1a;
         }
 
+        .feedback.correct {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
         .next-btn {
             margin-top: 20px;
         }
@@ -516,10 +528,10 @@
 
             // Show feedback
             const feedbackDiv = document.getElementById('feedback');
-            feedbackDiv.className = 'feedback';
+            feedbackDiv.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
             feedbackDiv.innerHTML = `
                 <div>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</div>
-                <div style="margin-top: 10px; color: #666;">
+                <div style="margin-top: 10px;">
                     The note is <strong>${correctAnswer}</strong> (${currentNote})
                 </div>
                 <button class="next-btn" onclick="nextQuestion()">${currentQuestion === totalQuestions - 1 ? 'See Results' : 'Next Question'}</button>
